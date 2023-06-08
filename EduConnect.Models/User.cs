@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace EduConnect.Models;
 
@@ -19,6 +18,10 @@ public partial class User
     public Guid? RoleId { get; set; }
 
     public string? Photo { get; set; }
+
+    public Guid? CollegeId { get; set; }
+
+    public virtual College? College { get; set; }
 
     public virtual ICollection<History> Histories { get; set; } = new List<History>();
 

@@ -34,13 +34,12 @@ namespace EduConnect.BLL.Services
             var userDb = await query.FirstOrDefaultAsync(x => x.Email == user.Email);
             if(userDb != null)
             {
-                string passwordUserHashed = _security.EncryptPassword(user.Password);
-                if(_security.VerifyPassword(user.Password, passwordUserHashed))
+                if(_security.VerifyPassword(user.Password, userDb.Password))
                 {
                     return userDb;
                 }
             }
-            return userDb;
+            return null;
         }
 
         public string GenerateJwt(User user)

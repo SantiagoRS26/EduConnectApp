@@ -31,9 +31,9 @@ public partial class EduConnectPruebasContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Data Source=REVISION-PC; Initial Catalog=EduConnectPruebas; Integrated Security=true; TrustServerCertificate=true;");
 
-    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Chat>(entity =>
@@ -165,6 +165,7 @@ public partial class EduConnectPruebasContext : DbContext
             entity.Property(e => e.UserId)
                 .HasDefaultValueSql("(newid())")
                 .HasColumnName("UserID");
+            entity.Property(e => e.CollegeId).HasColumnName("CollegeID");
             entity.Property(e => e.Email)
                 .HasMaxLength(100)
                 .IsUnicode(false);
@@ -179,6 +180,10 @@ public partial class EduConnectPruebasContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Photo).HasColumnType("text");
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
+
+            entity.HasOne(d => d.College).WithMany(p => p.Users)
+                .HasForeignKey(d => d.CollegeId)
+                .HasConstraintName("FK__Users__CollegeID__01142BA1");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
