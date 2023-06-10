@@ -4,7 +4,10 @@ using EduConnect.DAL.DataContext;
 using EduConnect.DAL.Interface;
 using EduConnect.DAL.Repositories;
 using EduConnect.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +35,21 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,6 +61,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

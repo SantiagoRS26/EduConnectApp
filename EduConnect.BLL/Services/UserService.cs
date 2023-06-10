@@ -58,12 +58,24 @@ namespace EduConnect.BLL.Services
             return await _repository.GetAll();
         }
 
+        public async Task<User> GetByEmail(string email)
+        {
+            var userData = await _repository.GetAll();
+            var data = userData.First(p => p.Email == email);
+            return data;
+        }
+
         public async Task<User> GetById(string id)
         {
             return await _repository.GetById(id);
         }
 
         public async Task<bool> Update(User entityModel)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<User> UploadProfilePicture(string picture)
         {
             throw new NotImplementedException();
         }

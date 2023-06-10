@@ -55,10 +55,10 @@ namespace EduConnect.BLL.Services
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             JwtSecurityToken token = new JwtSecurityToken(
-                    _configuration["Issuer"],
-                    _configuration["Audience"],
+                    _configuration["Jwt:Issuer"],
+                    _configuration["Jwt:Audience"],
                     claims,
-                    expires: DateTime.UtcNow.AddMinutes(1),
+                    expires: DateTime.Now.AddMinutes(5),
                     signingCredentials: credentials
             );
 

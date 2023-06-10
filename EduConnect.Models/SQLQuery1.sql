@@ -1,0 +1,69 @@
+CREATE DATABASE EduConnectPruebas;
+
+-- Create Roles table
+CREATE TABLE Roles (
+    RoleID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    RoleName VARCHAR(50)
+);
+
+-- Create Users table
+CREATE TABLE Users (
+    UserID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Name VARCHAR(50),
+    LastName VARCHAR(50),
+    Email VARCHAR(100),
+    Password VARCHAR(100),
+    RoleID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Roles(RoleID),
+    Photo TEXT
+);
+
+-- Create Colleges table
+CREATE TABLE Colleges (
+    CollegeID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    Name VARCHAR(100),
+    Address VARCHAR(100),
+    Latitude DECIMAL(9, 6),
+    Longitude DECIMAL(9, 6),
+    AdditionalInfo VARCHAR(MAX),
+    AvailableSlots INT,
+    Department VARCHAR(50),
+    City VARCHAR(50)
+);
+
+-- Create Requests table
+CREATE TABLE Requests (
+    RequestID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(UserID),
+    CollegeID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Colleges(CollegeID),
+    Status VARCHAR(50)
+);
+
+-- Create Matches table
+CREATE TABLE Matches (
+    MatchID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    RequestID_User1 UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Requests(RequestID),
+    RequestID_User2 UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Requests(RequestID),
+    CreatedDate DATETIME
+);
+
+-- Create Chats table
+CREATE TABLE Chats (
+    ChatID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    MatchID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Matches(MatchID),
+    Message VARCHAR(MAX),
+    SentDate DATETIME,
+    Sender VARCHAR(50)
+);
+
+-- Create History table
+CREATE TABLE History (
+    HistoryID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(UserID),
+    CollegeID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Colleges(CollegeID),
+    ChangeType VARCHAR(50),
+    ChangeDate DATETIME
+);
+
+-- Add CollegeID column to Users table
+ALTER TABLE Users
+ADD CollegeID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Colleges(CollegeID);

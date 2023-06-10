@@ -15,5 +15,9 @@ namespace EduConnect.BLL.Interfaces
         Task<bool> Delete(int id);
         Task<bool> Update(User entityModel);
         Task<User> GetById(string id);
+        Task<User> GetByEmail(string email);
+
+        Task<User> UploadProfilePicture(string picture);
+
     }
 }
