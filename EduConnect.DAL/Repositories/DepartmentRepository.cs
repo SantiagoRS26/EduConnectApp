@@ -1,6 +1,7 @@
-﻿    using EduConnect.DAL.DataContext;
+﻿using EduConnect.DAL.DataContext;
 using EduConnect.DAL.Interface;
 using EduConnect.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,31 +10,25 @@ using System.Threading.Tasks;
 
 namespace EduConnect.DAL.Repositories
 {
-    public class RoleRepository : IGenericRepository<Role>
+    public class DepartmentRepository : IGenericRepository<Department>
     {
         private readonly EduConnectPruebasContext _dbContext;
 
-        public RoleRepository(EduConnectPruebasContext dbContext)
+        public DepartmentRepository(EduConnectPruebasContext context)
         {
-            _dbContext = dbContext;
+            _dbContext = context;
         }
 
-        public async Task<IQueryable<Role>> GetAll()
-        {
-            return _dbContext.Roles;
-        }
-
-        public async Task<bool> Create(Role entityModel)
+        public async Task<bool> Create(Department entityModel)
         {
             try
             {
-                _dbContext.Roles.Add(entityModel);
+                _dbContext.Add(entityModel);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
             catch (Exception)
             {
-                // Manejar cualquier excepción y realizar el manejo de errores adecuado
                 return false;
             }
         }
@@ -42,22 +37,32 @@ namespace EduConnect.DAL.Repositories
         {
             try
             {
-                var role = await _dbContext.Roles.FindAsync(id);
-                if (role == null)
+                Department department = await _dbContext.Departments.FindAsync(id) ?? new Department();
+                if (department == null)
                     return false;
 
-                _dbContext.Roles.Remove(role);
+                _dbContext.Departments.Remove(department);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
             catch (Exception)
             {
-                // Manejar cualquier excepción y realizar el manejo de errores adecuado
                 return false;
             }
         }
 
-        public async Task<bool> Update(Role entityModel)
+        public async Task<IQueryable<Department>> GetAll()
+        {
+            IQueryable<Department> entityModels = _dbContext.Departments;
+            return entityModels;
+        }
+
+        public async Task<Department> GetById(string id)
+        {
+            return await _dbContext.Departments.FindAsync(id) ?? new Department();
+        }
+
+        public async Task<bool> Update(Department entityModel)
         {
             try
             {
@@ -67,15 +72,8 @@ namespace EduConnect.DAL.Repositories
             }
             catch (Exception)
             {
-                // Manejar cualquier excepción y realizar el manejo de errores adecuado
                 return false;
             }
         }
-
-        public async Task<Role> GetById(string id)
-        {
-            return await _dbContext.Roles.FindAsync(id) ?? new Role();
-        }
     }
-
 }

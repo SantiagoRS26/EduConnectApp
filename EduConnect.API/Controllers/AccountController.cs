@@ -1,12 +1,12 @@
 ﻿using EduConnect.API.Models;
 using EduConnect.BLL.Interfaces;
 using EduConnect.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.Security.Claims;
 
 namespace EduConnect.API.Controllers
 {
@@ -16,10 +16,12 @@ namespace EduConnect.API.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
-        public AccountController(IAuthService authService, IUserService userService)
+        private readonly ICollegeService _collegeService;
+        public AccountController(IAuthService authService, IUserService userService, ICollegeService collegeService)
         {
             _authService = authService;
             _userService = userService;
+            _collegeService = collegeService;
         }
 
         [HttpPost("login")]
@@ -43,15 +45,58 @@ namespace EduConnect.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel user)
         {
-            if(ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                bool response = await _userService.CreateUser(new User { Name = user.Name, LastName = user.LastName, Email = user.Email, Password = user.Password  });
-                if (response)
+                return BadRequest(ModelState);
+            }
+            bool response = await _userService.CreateUser(new User { Name = user.Name, LastName = user.LastName, Email = user.Email, Password = user.Password });
+
+            if (!response) {
+                return BadRequest(ModelState);
+            }
+            return StatusCode(200, user);
+            
+        }
+        [HttpPatch("updateUser")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUser(UserModel updatedUser)
+        {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
+            var emailUser = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+            if (emailUser == null)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var existingUser = await _userService.GetByEmail(emailUser);
+
+            if (existingUser == null) return NotFound("El usuario no existe.");
+
+            if (updatedUser.CollegeId.HasValue)
+            {
+                var collegeExists = await _collegeService.CollegeExists(updatedUser.CollegeId.ToString());
+                if (!collegeExists)
                 {
-                    return StatusCode(200, user);
+                    ModelState.AddModelError("CollegeId", "El ID del colegio proporcionado no existe.");
                 }
             }
-            return BadRequest(ModelState);
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            existingUser.Name = updatedUser.Name ?? existingUser.Name;
+            existingUser.LastName = updatedUser.LastName ?? existingUser.LastName;
+            existingUser.Email = updatedUser.Email ?? existingUser.Email;
+            existingUser.Password = updatedUser.Password ?? existingUser.Password;
+            existingUser.CollegeId = updatedUser.CollegeId ?? existingUser.CollegeId;
+
+            // Guardar los cambios en la base de datos
+            _userService.Update(existingUser);
+
+            return Ok("Usuario actualizado exitosamente.");
         }
 
         [HttpGet("listar")]
@@ -70,8 +115,10 @@ namespace EduConnect.API.Controllers
 
         [HttpGet]
         [Authorize]
-        public async Task<IActionResult> UserData(string emailUser)
+        public async Task<IActionResult> UserData()
         {
+            var emailUser = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
+            if(emailUser == null) return BadRequest(ModelState);
             User userData = await _userService.GetByEmail(emailUser);
             var response = new User
             {
@@ -85,14 +132,71 @@ namespace EduConnect.API.Controllers
 
         [HttpPost("uploadprofilepicture")]
         [Authorize]
-        public IActionResult UploadProfilePicture(IFormFile file)
+        public async Task<IActionResult> UploadProfilePicture(IFormFile file)
         {
             if (file == null || file.Length == 0)
             {
-                return BadRequest(ModelState);
+                return BadRequest("No se ha proporcionado ningún archivo.");
             }
-            
-        }
 
+            const int MAX_IMAGE_SIZE_IN_BYTES = 5 * 1024 * 1024; // 5 MB
+
+            if (file.Length > MAX_IMAGE_SIZE_IN_BYTES)
+            {
+                return BadRequest("La imagen supera el tamaño permitido.");
+            }
+
+            string[] validExtensions = { ".jpg", ".jpeg", ".png", ".gif" };
+            string extension = Path.GetExtension(file.FileName);
+            bool validExtension = validExtensions.Contains(extension.ToLower());
+
+            if(!validExtension)
+            {
+                return BadRequest("Formato de imagen no válido.");
+            }
+
+            var userEmailClaim = HttpContext.User.FindFirst(ClaimTypes.Email);
+            if(userEmailClaim == null)
+            {
+                return BadRequest("Token Invalido.");
+            }
+
+            string userEmail = userEmailClaim.Value;
+
+            User user = await _userService.GetByEmail(userEmail);
+
+            if (user == null)
+            {
+                return BadRequest("Usuario no encontrado");
+            }
+
+            string folderPath = "pictureProfiles";
+            string userId = user.UserId.ToString();
+            string fileName = $"{DateTime.Now.ToString("yyyyMMdd_HHmmss")}_{file.FileName}";
+            string userFolderPath = Path.Combine(Directory.GetCurrentDirectory(), folderPath, userId);
+
+            if (!Directory.Exists(userFolderPath))
+            {
+                Directory.CreateDirectory(userFolderPath);
+            }
+
+            string patchFile = Path.Combine(userFolderPath, fileName);
+
+            try
+            {
+                user.Photo = patchFile;
+                _userService.Update(user);
+                using (var stream = new FileStream(patchFile, FileMode.Create))
+                {
+                    file.CopyTo(stream);
+                }
+                return Ok("Imagen Subida Correctamente");
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex);
+            }
+        }
     }
 }

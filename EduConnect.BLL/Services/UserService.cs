@@ -17,12 +17,14 @@ namespace EduConnect.BLL.Services
     public class UserService : IUserService
     {
         private readonly IGenericRepository<User> _repository;
+        private readonly IGenericRepository<Role> _repositoryRole;
         private readonly ISecurityService _securityService;
         
-        public UserService(IGenericRepository<User> repository, IConfiguration configuration, ISecurityService securityService)
+        public UserService(IGenericRepository<User> repository, IConfiguration configuration, ISecurityService securityService, IGenericRepository<Role>  repositoryRole)
         {
             _repository = repository;
             _securityService = securityService;
+            _repositoryRole = repositoryRole;
         }
 
         public async Task<bool> CreateUser(User entityModel)
@@ -30,7 +32,7 @@ namespace EduConnect.BLL.Services
             try
             {
                 entityModel.Password = _securityService.EncryptPassword(entityModel.Password);
-                entityModel.RoleId = new Guid("41C056BA-EF76-419F-8BC0-3CAE439D7D5B");
+                entityModel.RoleId = new Guid(await getRoleIdUser());
                 await _repository.Create(entityModel);
                 return true; 
             }
@@ -38,6 +40,14 @@ namespace EduConnect.BLL.Services
             {
                 return false;
             }
+        }
+
+        public async Task<string> getRoleIdUser()
+        {
+            var query = await _repositoryRole.GetAll();
+            var role  = query.FirstOrDefault(p => p.RoleName=="user");
+            if (role == null) return "";
+            return role.RoleId.ToString();
         }
 
         public async Task<bool> Delete(int id)
@@ -72,12 +82,15 @@ namespace EduConnect.BLL.Services
 
         public async Task<bool> Update(User entityModel)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<User> UploadProfilePicture(string picture)
-        {
-            throw new NotImplementedException();
+            try
+            {
+                await _repository.Update(entityModel);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

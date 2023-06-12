@@ -11,17 +11,17 @@ public partial class College
 
     public string? Address { get; set; }
 
-    public decimal? Latitude { get; set; }
+    public string? Latitude { get; set; }
 
-    public decimal? Longitude { get; set; }
+    public string? Longitude { get; set; }
 
     public string? AdditionalInfo { get; set; }
 
     public int? AvailableSlots { get; set; }
 
-    public string? Department { get; set; }
+    public string? CityId { get; set; }
 
-    public string? City { get; set; }
+    public virtual City? City { get; set; }
 
     public virtual ICollection<History> Histories { get; set; } = new List<History>();
 

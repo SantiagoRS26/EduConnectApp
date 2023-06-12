@@ -30,10 +30,14 @@ builder.Services.AddScoped<IGenericRepository<Request>, RequestRepository>();
 builder.Services.AddScoped<IGenericRepository<Role>, RoleRepository>();
 builder.Services.AddScoped<IGenericRepository<Chat>, ChatRepository>();
 builder.Services.AddScoped<IGenericRepository<Match>, MatchRepository>();
+builder.Services.AddScoped<IGenericRepository<Department>, DepartmentRepository>();
+builder.Services.AddScoped<IGenericRepository<City>, CityRepository>();
 
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICollegeService, CollegeService>();
+builder.Services.AddScoped<IRequestService, RequestService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

@@ -18,7 +18,11 @@ public partial class EduConnectPruebasContext : DbContext
 
     public virtual DbSet<Chat> Chats { get; set; }
 
+    public virtual DbSet<City> Cities { get; set; }
+
     public virtual DbSet<College> Colleges { get; set; }
+
+    public virtual DbSet<Department> Departments { get; set; }
 
     public virtual DbSet<History> Histories { get; set; }
 
@@ -31,14 +35,14 @@ public partial class EduConnectPruebasContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=REVISION-PC; Initial Catalog=EduConnectPruebas; Integrated Security=true; TrustServerCertificate=true;");
+    {
 
+    }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Chat>(entity =>
         {
-            entity.HasKey(e => e.ChatId).HasName("PK__Chats__A9FBE6260A370B06");
+            entity.HasKey(e => e.ChatId).HasName("PK__Chats__A9FBE62678CA6262");
 
             entity.Property(e => e.ChatId)
                 .HasDefaultValueSql("(newid())")
@@ -52,12 +56,33 @@ public partial class EduConnectPruebasContext : DbContext
 
             entity.HasOne(d => d.Match).WithMany(p => p.Chats)
                 .HasForeignKey(d => d.MatchId)
-                .HasConstraintName("FK__Chats__MatchID__60A75C0F");
+                .HasConstraintName("FK__Chats__MatchID__797309D9");
+        });
+
+        modelBuilder.Entity<City>(entity =>
+        {
+            entity.HasKey(e => e.CityId).HasName("PK__Cities__F2D21A967142F449");
+
+            entity.Property(e => e.CityId)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("CityID");
+            entity.Property(e => e.CityName)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+            entity.Property(e => e.DepartmentId)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("DepartmentID");
+
+            entity.HasOne(d => d.Department).WithMany(p => p.Cities)
+                .HasForeignKey(d => d.DepartmentId)
+                .HasConstraintName("FK__Cities__Departme__60A75C0F");
         });
 
         modelBuilder.Entity<College>(entity =>
         {
-            entity.HasKey(e => e.CollegeId).HasName("PK__Colleges__294095194389AE09");
+            entity.HasKey(e => e.CollegeId).HasName("PK__Colleges__2940951979CA4D35");
 
             entity.Property(e => e.CollegeId)
                 .HasDefaultValueSql("(newid())")
@@ -66,22 +91,41 @@ public partial class EduConnectPruebasContext : DbContext
             entity.Property(e => e.Address)
                 .HasMaxLength(100)
                 .IsUnicode(false);
-            entity.Property(e => e.City)
+            entity.Property(e => e.CityId)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("CityID");
+            entity.Property(e => e.Latitude)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Department)
+            entity.Property(e => e.Longitude)
                 .HasMaxLength(50)
                 .IsUnicode(false);
-            entity.Property(e => e.Latitude).HasColumnType("decimal(9, 6)");
-            entity.Property(e => e.Longitude).HasColumnType("decimal(9, 6)");
             entity.Property(e => e.Name)
+                .HasMaxLength(100)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.City).WithMany(p => p.Colleges)
+                .HasForeignKey(d => d.CityId)
+                .HasConstraintName("FK__Colleges__CityID__6477ECF3");
+        });
+
+        modelBuilder.Entity<Department>(entity =>
+        {
+            entity.HasKey(e => e.DepartmentId).HasName("PK__Departme__B2079BCDA5A54A90");
+
+            entity.Property(e => e.DepartmentId)
+                .HasMaxLength(20)
+                .IsUnicode(false)
+                .HasColumnName("DepartmentID");
+            entity.Property(e => e.DepartmentName)
                 .HasMaxLength(100)
                 .IsUnicode(false);
         });
 
         modelBuilder.Entity<History>(entity =>
         {
-            entity.HasKey(e => e.HistoryId).HasName("PK__History__4D7B4ADD21C18F92");
+            entity.HasKey(e => e.HistoryId).HasName("PK__History__4D7B4ADD2223EE8A");
 
             entity.ToTable("History");
 
@@ -97,16 +141,16 @@ public partial class EduConnectPruebasContext : DbContext
 
             entity.HasOne(d => d.College).WithMany(p => p.Histories)
                 .HasForeignKey(d => d.CollegeId)
-                .HasConstraintName("FK__History__College__656C112C");
+                .HasConstraintName("FK__History__College__7E37BEF6");
 
             entity.HasOne(d => d.User).WithMany(p => p.Histories)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__History__UserID__6477ECF3");
+                .HasConstraintName("FK__History__UserID__7D439ABD");
         });
 
         modelBuilder.Entity<Match>(entity =>
         {
-            entity.HasKey(e => e.MatchId).HasName("PK__Matches__4218C837B25220A5");
+            entity.HasKey(e => e.MatchId).HasName("PK__Matches__4218C837340F52AB");
 
             entity.Property(e => e.MatchId)
                 .HasDefaultValueSql("(newid())")
@@ -117,16 +161,16 @@ public partial class EduConnectPruebasContext : DbContext
 
             entity.HasOne(d => d.RequestIdUser1Navigation).WithMany(p => p.MatchRequestIdUser1Navigations)
                 .HasForeignKey(d => d.RequestIdUser1)
-                .HasConstraintName("FK__Matches__Request__5BE2A6F2");
+                .HasConstraintName("FK__Matches__Request__74AE54BC");
 
             entity.HasOne(d => d.RequestIdUser2Navigation).WithMany(p => p.MatchRequestIdUser2Navigations)
                 .HasForeignKey(d => d.RequestIdUser2)
-                .HasConstraintName("FK__Matches__Request__5CD6CB2B");
+                .HasConstraintName("FK__Matches__Request__75A278F5");
         });
 
         modelBuilder.Entity<Request>(entity =>
         {
-            entity.HasKey(e => e.RequestId).HasName("PK__Requests__33A8519ADC79D833");
+            entity.HasKey(e => e.RequestId).HasName("PK__Requests__33A8519A8A0DC28C");
 
             entity.Property(e => e.RequestId)
                 .HasDefaultValueSql("(newid())")
@@ -139,16 +183,16 @@ public partial class EduConnectPruebasContext : DbContext
 
             entity.HasOne(d => d.College).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.CollegeId)
-                .HasConstraintName("FK__Requests__Colleg__5812160E");
+                .HasConstraintName("FK__Requests__Colleg__70DDC3D8");
 
             entity.HasOne(d => d.User).WithMany(p => p.Requests)
                 .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Requests__UserID__571DF1D5");
+                .HasConstraintName("FK__Requests__UserID__6FE99F9F");
         });
 
         modelBuilder.Entity<Role>(entity =>
         {
-            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE3ABB08B47E");
+            entity.HasKey(e => e.RoleId).HasName("PK__Roles__8AFACE3A4DEE7B05");
 
             entity.Property(e => e.RoleId)
                 .HasDefaultValueSql("(newid())")
@@ -160,7 +204,7 @@ public partial class EduConnectPruebasContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCACF2D58CB5");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCACD4B00E4D");
 
             entity.Property(e => e.UserId)
                 .HasDefaultValueSql("(newid())")
@@ -178,16 +222,16 @@ public partial class EduConnectPruebasContext : DbContext
             entity.Property(e => e.Password)
                 .HasMaxLength(100)
                 .IsUnicode(false);
-            entity.Property(e => e.Photo).HasColumnType("text");
+            entity.Property(e => e.Photo).IsUnicode(false);
             entity.Property(e => e.RoleId).HasColumnName("RoleID");
 
             entity.HasOne(d => d.College).WithMany(p => p.Users)
                 .HasForeignKey(d => d.CollegeId)
-                .HasConstraintName("FK__Users__CollegeID__01142BA1");
+                .HasConstraintName("FK__Users__CollegeID__6C190EBB");
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
-                .HasConstraintName("FK__Users__RoleID__5070F446");
+                .HasConstraintName("FK__Users__RoleID__6B24EA82");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -31,8 +31,6 @@ namespace EduConnect.BLL.Services
         public bool VerifyPassword(string password, string hashedPassword)
         {
             string hashedInput = EncryptPassword(password);
-            Console.WriteLine(hashedInput);
-            Console.WriteLine(hashedPassword);
             return string.Equals(hashedInput, hashedPassword, StringComparison.OrdinalIgnoreCase);
         }
     }
