@@ -1,6 +1,8 @@
 ﻿using EduConnect.BLL.Interfaces;
 using EduConnect.DAL.Interface;
 using EduConnect.Models;
+using Microsoft.EntityFrameworkCore;
+using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,5 +24,24 @@ namespace EduConnect.BLL.Services
             
             return college != null;
         }
+
+        public async Task<College> GetCollegeById(string collegeId)
+        {
+            var school = await _repository.GetById(collegeId) ?? new College();
+            return school;
+        }
+
+        public async Task<IQueryable<College>> GetCollegesWithinRadius(Geometry circle)
+        {
+            var query = await _repository.GetAll();
+
+            var filteredColleges = query.AsEnumerable()
+                .Where(c => c.Latitude.HasValue && c.Longitude.HasValue &&
+                            circle.Contains(new Point((double)c.Longitude.Value, (double)c.Latitude.Value) { SRID = 4326 }));
+
+            return filteredColleges.AsQueryable();
+        }
+
+
     }
 }

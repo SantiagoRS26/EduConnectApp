@@ -60,7 +60,7 @@ namespace EduConnect.DAL.Repositories
 
         public async Task<User> GetById(string id)
         {
-            return await _dbContext.Users.FindAsync(id) ?? new User();
+            return await _dbContext.Users.FindAsync(new Guid(id)) ?? new User();
         }
 
         public async Task<bool> Update(User entityModel)

@@ -74,7 +74,7 @@ namespace EduConnect.DAL.Repositories
 
         public async Task<Chat> GetById(string id)
         {
-            return await _dbContext.Chats.FindAsync(id);
+            return await _dbContext.Chats.FindAsync(new Guid(id));
         }
     }
 

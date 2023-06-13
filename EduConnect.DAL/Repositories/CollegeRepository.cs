@@ -71,7 +71,7 @@ namespace EduConnect.DAL.Repositories
 
         public async Task<College> GetById(string id)
         {
-            return await _dbContext.Colleges.FindAsync(id);
+            return await _dbContext.Colleges.FindAsync(new Guid(id));
         }
     }
 

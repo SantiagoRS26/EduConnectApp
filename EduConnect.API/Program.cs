@@ -38,6 +38,7 @@ builder.Services.AddScoped<ISecurityService, SecurityService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICollegeService, CollegeService>();
 builder.Services.AddScoped<IRequestService, RequestService>();
+builder.Services.AddScoped<IMatchService, MatchService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {

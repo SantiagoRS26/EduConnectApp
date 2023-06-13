@@ -18,8 +18,8 @@ CREATE TABLE Colleges (
     CollegeID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     Name VARCHAR(100),
     Address VARCHAR(100),
-    Latitude VARCHAR(50),
-    Longitude VARCHAR(50),
+    Latitude DECIMAL(9, 6),
+    Longitude DECIMAL(9, 6),
     AdditionalInfo VARCHAR(MAX),
     AvailableSlots INT,
     CityID VARCHAR(20) FOREIGN KEY REFERENCES Cities(CityID)
@@ -48,6 +48,7 @@ CREATE TABLE Requests (
     RequestID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
     UserID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(UserID),
     CollegeID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Colleges(CollegeID),
+    CreatedDate DATETIME,
     Status VARCHAR(50)
 );
 
@@ -76,6 +77,3 @@ CREATE TABLE History (
     ChangeType VARCHAR(50),
     ChangeDate DATETIME
 );
-
-ALTER TABLE Requests
-ADD CreatedDate DATETIME;

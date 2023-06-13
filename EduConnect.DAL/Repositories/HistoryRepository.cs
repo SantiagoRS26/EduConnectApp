@@ -74,7 +74,7 @@ namespace EduConnect.DAL.Repositories
 
         public async Task<History> GetById(string id)
         {
-            return await _dbContext.Histories.FindAsync(id);
+            return await _dbContext.Histories.FindAsync(new Guid(id));
         }
     }
 }

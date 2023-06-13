@@ -74,7 +74,7 @@ namespace EduConnect.DAL.Repositories
 
         public async Task<Role> GetById(string id)
         {
-            return await _dbContext.Roles.FindAsync(id) ?? new Role();
+            return await _dbContext.Roles.FindAsync(new Guid(id)) ?? new Role();
         }
     }
 

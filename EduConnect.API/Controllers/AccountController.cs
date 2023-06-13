@@ -64,10 +64,6 @@ namespace EduConnect.API.Controllers
             if(!ModelState.IsValid) return BadRequest(ModelState);
 
             var emailUser = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
-            if (emailUser == null)
-            {
-                return BadRequest(ModelState);
-            }
 
             var existingUser = await _userService.GetByEmail(emailUser);
 
@@ -94,7 +90,7 @@ namespace EduConnect.API.Controllers
             existingUser.CollegeId = updatedUser.CollegeId ?? existingUser.CollegeId;
 
             // Guardar los cambios en la base de datos
-            _userService.Update(existingUser);
+            await _userService.Update(existingUser);
 
             return Ok("Usuario actualizado exitosamente.");
         }
@@ -185,7 +181,7 @@ namespace EduConnect.API.Controllers
             try
             {
                 user.Photo = patchFile;
-                _userService.Update(user);
+                await _userService.Update(user);
                 using (var stream = new FileStream(patchFile, FileMode.Create))
                 {
                     file.CopyTo(stream);
