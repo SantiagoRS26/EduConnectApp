@@ -27,7 +27,8 @@ namespace EduConnect.BLL.Services
             {
                 UserId = userId,
                 CollegeId = collegeId,
-                Status = "Pendiente"
+                Status = "Pendiente",
+                CreatedDate = DateTime.UtcNow
             };
 
             var flagRequest = await _repositoryRequest.Create(request);
@@ -35,7 +36,7 @@ namespace EduConnect.BLL.Services
             return false;
         }
 
-        public async Task<IQueryable<Request>> FindMatchingRequests(Guid userId, Guid collegeId)
+        public async Task<Request> FindMatchingRequests(Guid userId, Guid collegeId)
         {
             var userRequests = await GetRequestsByUserId(userId);
 
@@ -45,7 +46,17 @@ namespace EduConnect.BLL.Services
 
             var collegeRequests = await GetRequestsByCollegeId(user.CollegeId ?? Guid.Empty,user.UserId);
 
-            var matchingCollegeRequests = collegeRequests.Where(request => request.User.CollegeId == collegeId);
+            var matchingCollegeRequests = collegeRequests.OrderBy(request => request.CreatedDate).FirstOrDefault(request => request.User.CollegeId == collegeId);
+
+
+            if (matchingCollegeRequests != null)
+            {
+                matchingCollegeRequests.Status = "En Proceso";
+                userRequest.Status = "En Proceso";
+
+                var updateRequest1 = _repositoryRequest.Update(matchingCollegeRequests);
+                var updateRequest2 = _repositoryRequest.Update(userRequest);
+            }
 
             return matchingCollegeRequests;
         }
@@ -62,11 +73,6 @@ namespace EduConnect.BLL.Services
             var query = await _repositoryRequest.GetAll();
             var response = query.Where(p => p.CollegeId == collegeId && p.UserId != userId && p.Status == "Pendiente");
             return response;
-        }
-
-        public Task<bool> FindMatch(string userId, string collegeId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

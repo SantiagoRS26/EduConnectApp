@@ -9,9 +9,8 @@ namespace EduConnect.BLL.Interfaces
 {
     public interface IRequestService
     {
-        Task<bool> FindMatch(string userId, string collegeId);
         Task<bool> CreateRequest(Guid userId, Guid collegeId);
         Task<IQueryable<Request>> GetRequestsByUserId(Guid userId);
-        Task<IQueryable<Request>> FindMatchingRequests(Guid userId, Guid collegeId);
+        Task<Request> FindMatchingRequests(Guid userId, Guid collegeId);
     }
 }

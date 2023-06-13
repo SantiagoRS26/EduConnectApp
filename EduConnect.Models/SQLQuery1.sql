@@ -76,3 +76,6 @@ CREATE TABLE History (
     ChangeType VARCHAR(50),
     ChangeDate DATETIME
 );
+
+ALTER TABLE Requests
+ADD CreatedDate DATETIME;

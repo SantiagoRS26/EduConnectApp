@@ -13,6 +13,8 @@ public partial class Request
 
     public string? Status { get; set; }
 
+    public DateTime? CreatedDate { get; set; }
+
     public virtual College? College { get; set; }
 
     public virtual ICollection<Match> MatchRequestIdUser1Navigations { get; set; } = new List<Match>();
