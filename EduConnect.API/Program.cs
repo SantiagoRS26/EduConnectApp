@@ -1,3 +1,4 @@
+using EduConnect.API.Hubs;
 using EduConnect.BLL.Interfaces;
 using EduConnect.BLL.Services;
 using EduConnect.DAL.DataContext;
@@ -17,6 +18,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 builder.Services.AddDbContext<EduConnectPruebasContext>(opciones =>
 {
     opciones.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionDB"));
@@ -70,5 +72,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHub<ChatHub>("Hubs/ChatHub.cs");
 
 app.Run();

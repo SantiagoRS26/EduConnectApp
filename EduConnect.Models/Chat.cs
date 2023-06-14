@@ -13,7 +13,9 @@ public partial class Chat
 
     public DateTime? SentDate { get; set; }
 
-    public string? Sender { get; set; }
+    public Guid? SenderId { get; set; }
 
     public virtual Match? Match { get; set; }
+
+    public virtual User? Sender { get; set; }
 }

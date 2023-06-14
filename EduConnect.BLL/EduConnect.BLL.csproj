@@ -9,8 +9,8 @@
   <ItemGroup>
     <PackageReference Include="NetTopologySuite" Version="2.5.0" />
   </ItemGroup>
-
-  <ItemGroup>
+	
+	<ItemGroup>
     <ProjectReference Include="..\EduConnect.DAL\EduConnect.DAL.csproj" />
     <ProjectReference Include="..\EduConnect.Models\EduConnect.Models.csproj" />
   </ItemGroup>

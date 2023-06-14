@@ -21,6 +21,8 @@ public partial class User
 
     public Guid? CollegeId { get; set; }
 
+    public virtual ICollection<Chat> Chats { get; set; } = new List<Chat>();
+
     public virtual College? College { get; set; }
 
     public virtual ICollection<History> Histories { get; set; } = new List<History>();

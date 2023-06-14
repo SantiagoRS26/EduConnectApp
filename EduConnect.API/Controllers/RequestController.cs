@@ -1,7 +1,9 @@
-﻿using EduConnect.BLL.Interfaces;
+﻿using EduConnect.API.Hubs;
+using EduConnect.BLL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,13 +18,15 @@ namespace EduConnect.API.Controllers
         private readonly ICollegeService _collegeService;
         private readonly IRequestService _requestService;
         private readonly IMatchService _matchService;
+        private readonly IHubContext<ChatHub> _chatHubContext;
 
-        public RequestController(IUserService userService, ICollegeService collegeService, IRequestService requestService, IMatchService matchService)
+        public RequestController(IUserService userService, ICollegeService collegeService, IRequestService requestService, IMatchService matchService, IHubContext<ChatHub> chatHubContext)
         {
             _userService = userService;
             _collegeService = collegeService;
             _requestService = requestService;
             _matchService = matchService;
+            _chatHubContext = chatHubContext;
         }
 
 
@@ -55,7 +59,11 @@ namespace EduConnect.API.Controllers
             {
                 var requestsUser = await _requestService.GetRequestsByUserId(user.UserId);
                 var requestUser = requestsUser.FirstOrDefault(p => p.CollegeId == new Guid(collegeId));
-                if (await _matchService.CreateMatch(requestUser, matchingCollegeRequests)) return Ok("La solicitud se creo exitosamente y ya tienes un match");
+                if (await _matchService.CreateMatch(requestUser, matchingCollegeRequests))
+                {
+                    return Ok("La solicitud se creo exitosamente y ya tienes un match");
+                }
+                    
                 return Ok("Se creo la solicitud pero no se pudo crear el match.");
             }
             return Ok("Se ha creado la solicitud correctamente!");

@@ -49,14 +49,16 @@ public partial class EduConnectPruebasContext : DbContext
                 .HasColumnName("ChatID");
             entity.Property(e => e.MatchId).HasColumnName("MatchID");
             entity.Property(e => e.Message).IsUnicode(false);
-            entity.Property(e => e.Sender)
-                .HasMaxLength(50)
-                .IsUnicode(false);
+            entity.Property(e => e.SenderId).HasColumnName("SenderID");
             entity.Property(e => e.SentDate).HasColumnType("datetime");
 
             entity.HasOne(d => d.Match).WithMany(p => p.Chats)
                 .HasForeignKey(d => d.MatchId)
                 .HasConstraintName("FK__Chats__MatchID__797309D9");
+
+            entity.HasOne(d => d.Sender).WithMany(p => p.Chats)
+                .HasForeignKey(d => d.SenderId)
+                .HasConstraintName("FK__Chats__SenderID__14270015");
         });
 
         modelBuilder.Entity<City>(entity =>
