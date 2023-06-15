@@ -34,7 +34,7 @@ namespace EduConnect.DAL.Repositories
             }
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> Delete(string id)
         {
             try
             {

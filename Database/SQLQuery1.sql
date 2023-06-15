@@ -43,11 +43,6 @@ CREATE TABLE Users (
     CollegeID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Colleges(CollegeID)
 );
 
-CREATE TABLE Connections (
-    ConnectionID VARCHAR(100) PRIMARY KEY,
-    UserID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(UserID)
-);
-
 -- Create Requests table
 CREATE TABLE Requests (
     RequestID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
@@ -57,21 +52,21 @@ CREATE TABLE Requests (
     Status VARCHAR(50)
 );
 
--- Create Chats table
-CREATE TABLE Chats (
-    ChatID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    RequestID1 UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Requests(RequestID),
-    RequestID2 UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Requests(RequestID),
+-- Create Matches table
+CREATE TABLE Matches (
+    MatchID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    RequestID_User1 UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Requests(RequestID),
+    RequestID_User2 UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Requests(RequestID),
     CreatedDate DATETIME
 );
 
--- Create ChatMensajes table
-CREATE TABLE ChatMessages (
-    MessageID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    ChatID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Chats(ChatID),
-    SenderID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(UserID),
+-- Create Chats table
+CREATE TABLE Chats (
+    ChatID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    MatchID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Matches(MatchID),
     Message VARCHAR(MAX),
-    SentDate DATETIME
+    SentDate DATETIME,
+    Sender VARCHAR(50)
 );
 
 -- Create History table
@@ -82,5 +77,3 @@ CREATE TABLE History (
     ChangeType VARCHAR(50),
     ChangeDate DATETIME
 );
-
-Scaffold-DbContext "Data Source=REVISION-PC; Initial Catalog=EduConnectPruebas; Integrated Security=true; TrustServerCertificate=true;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataContext -Force

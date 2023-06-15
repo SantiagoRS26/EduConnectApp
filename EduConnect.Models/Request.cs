@@ -11,15 +11,15 @@ public partial class Request
 
     public Guid? CollegeId { get; set; }
 
-    public string? Status { get; set; }
-
     public DateTime? CreatedDate { get; set; }
 
+    public string? Status { get; set; }
+
+    public virtual ICollection<Chat> ChatRequestId1Navigations { get; set; } = new List<Chat>();
+
+    public virtual ICollection<Chat> ChatRequestId2Navigations { get; set; } = new List<Chat>();
+
     public virtual College? College { get; set; }
-
-    public virtual ICollection<Match> MatchRequestIdUser1Navigations { get; set; } = new List<Match>();
-
-    public virtual ICollection<Match> MatchRequestIdUser2Navigations { get; set; } = new List<Match>();
 
     public virtual User? User { get; set; }
 }

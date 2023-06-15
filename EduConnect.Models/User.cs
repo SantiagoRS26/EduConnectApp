@@ -21,9 +21,11 @@ public partial class User
 
     public Guid? CollegeId { get; set; }
 
-    public virtual ICollection<Chat> Chats { get; set; } = new List<Chat>();
+    public virtual ICollection<ChatMessage> ChatMessages { get; set; } = new List<ChatMessage>();
 
     public virtual College? College { get; set; }
+
+    public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();
 
     public virtual ICollection<History> Histories { get; set; } = new List<History>();
 

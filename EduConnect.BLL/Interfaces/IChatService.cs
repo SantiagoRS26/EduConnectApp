@@ -9,7 +9,10 @@ namespace EduConnect.BLL.Interfaces
 {
     public interface IChatService
     {
-        Task<bool> SaveMessage(Chat message);
-        Task<IQueryable<Chat>> GetChatMessages(Guid chatId);
+        Task<bool> SaveMessage(ChatMessage message);
+        Task<IQueryable<ChatMessage>> GetChatMessages(Guid chatId);
+        Task<bool> CreateNewChat(Chat entity);
+        Task<IQueryable<Request>> GetRequestIdsByChatId(Guid chatId);
+        Task<bool> UserBelongsChat(Guid userId, Guid chatId);
     }
 }

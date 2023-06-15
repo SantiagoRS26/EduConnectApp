@@ -10,7 +10,7 @@ namespace EduConnect.DAL.Interface
     {
         Task<IQueryable<TEntityModel>> GetAll();
         Task<bool> Create(TEntityModel entityModel);
-        Task<bool> Delete(int id);
+        Task<bool> Delete(string id);
         Task<bool> Update(TEntityModel entityModel);
         Task<TEntityModel> GetById(string id);
     }

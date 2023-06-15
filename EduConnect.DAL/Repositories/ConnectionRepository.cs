@@ -1,6 +1,7 @@
 ﻿using EduConnect.DAL.DataContext;
 using EduConnect.DAL.Interface;
 using EduConnect.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,30 +10,25 @@ using System.Threading.Tasks;
 
 namespace EduConnect.DAL.Repositories
 {
-    public class RequestRepository : IGenericRepository<Request>
+    public class ConnectionRepository : IGenericRepository<Connection>
     {
         private readonly EduConnectPruebasContext _dbContext;
-        public RequestRepository(EduConnectPruebasContext dbContext)
+
+        public ConnectionRepository(EduConnectPruebasContext context)
         {
-            _dbContext = dbContext;
+            _dbContext = context;
         }
 
-        public async Task<IQueryable<Request>> GetAll()
-        {
-            return _dbContext.Requests;
-        }
-
-        public async Task<bool> Create(Request entityModel)
+        public async Task<bool> Create(Connection entityModel)
         {
             try
             {
-                _dbContext.Requests.Add(entityModel);
+                _dbContext.Add(entityModel);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
             catch (Exception)
             {
-                // Manejar cualquier excepción y realizar el manejo de errores adecuado
                 return false;
             }
         }
@@ -41,22 +37,32 @@ namespace EduConnect.DAL.Repositories
         {
             try
             {
-                var request = await _dbContext.Requests.FindAsync(id);
-                if (request == null)
+                Connection connection = await _dbContext.Connections.FindAsync(id) ?? new Connection();
+                if (connection == null)
                     return false;
 
-                _dbContext.Requests.Remove(request);
+                _dbContext.Connections.Remove(connection);
                 await _dbContext.SaveChangesAsync();
                 return true;
             }
             catch (Exception)
             {
-                // Manejar cualquier excepción y realizar el manejo de errores adecuado
                 return false;
             }
         }
 
-        public async Task<bool> Update(Request entityModel)
+        public async Task<IQueryable<Connection>> GetAll()
+        {
+            IQueryable<Connection> entityModels = _dbContext.Connections;
+            return entityModels;
+        }
+
+        public async Task<Connection> GetById(string id)
+        {
+            return await _dbContext.Connections.FindAsync(id) ?? new Connection();
+        }
+
+        public async Task<bool> Update(Connection entityModel)
         {
             try
             {
@@ -66,14 +72,8 @@ namespace EduConnect.DAL.Repositories
             }
             catch (Exception)
             {
-                // Manejar cualquier excepción y realizar el manejo de errores adecuado
                 return false;
             }
-        }
-
-        public async Task<Request> GetById(string id)
-        {
-            return await _dbContext.Requests.FindAsync(new Guid(id));
         }
     }
 }

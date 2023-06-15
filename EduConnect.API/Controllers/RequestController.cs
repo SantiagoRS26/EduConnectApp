@@ -1,5 +1,6 @@
 ﻿using EduConnect.API.Hubs;
 using EduConnect.BLL.Interfaces;
+using EduConnect.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,16 +18,16 @@ namespace EduConnect.API.Controllers
         private readonly IUserService _userService;
         private readonly ICollegeService _collegeService;
         private readonly IRequestService _requestService;
-        private readonly IMatchService _matchService;
         private readonly IHubContext<ChatHub> _chatHubContext;
+        private readonly IChatService _chatService;
 
-        public RequestController(IUserService userService, ICollegeService collegeService, IRequestService requestService, IMatchService matchService, IHubContext<ChatHub> chatHubContext)
+        public RequestController(IUserService userService, ICollegeService collegeService, IRequestService requestService, IHubContext<ChatHub> chatHubContext, IChatService chatService)
         {
             _userService = userService;
             _collegeService = collegeService;
             _requestService = requestService;
-            _matchService = matchService;
             _chatHubContext = chatHubContext;
+            _chatService = chatService;
         }
 
 
@@ -59,11 +60,15 @@ namespace EduConnect.API.Controllers
             {
                 var requestsUser = await _requestService.GetRequestsByUserId(user.UserId);
                 var requestUser = requestsUser.FirstOrDefault(p => p.CollegeId == new Guid(collegeId));
-                if (await _matchService.CreateMatch(requestUser, matchingCollegeRequests))
+
+                var newChat = new Chat()
                 {
-                    return Ok("La solicitud se creo exitosamente y ya tienes un match");
-                }
-                    
+                    RequestId1 = matchingCollegeRequests.RequestId,
+                    RequestId2 = requestUser.RequestId,
+                    CreatedDate = DateTime.UtcNow
+                };
+                var flagNewChat = await _chatService.CreateNewChat(newChat);
+                if (flagNewChat) return Ok("Se creo la solicitud y ya tienes un match! Verifica en la pestaña de chats");
                 return Ok("Se creo la solicitud pero no se pudo crear el match.");
             }
             return Ok("Se ha creado la solicitud correctamente!");
