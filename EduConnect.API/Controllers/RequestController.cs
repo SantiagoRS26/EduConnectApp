@@ -33,7 +33,7 @@ namespace EduConnect.API.Controllers
 
         [HttpPost("sendRequest")]
         [Authorize]
-        public async Task<IActionResult> SendRequest(string collegeId)
+        public async Task<IActionResult> SendRequest([FromBody] string collegeId)
         {
             var userEmailClaim = HttpContext.User.FindFirst(ClaimTypes.Email);
             if (userEmailClaim == null)

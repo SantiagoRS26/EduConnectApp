@@ -23,7 +23,12 @@ namespace EduConnect.API.Controllers
             _userService = userService;
             _collegeService = collegeService;
         }
-
+        [HttpGet("validateJwt")]
+        [Authorize]
+        public IActionResult ValidateJwt()
+        {
+            return Ok();
+        }
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {

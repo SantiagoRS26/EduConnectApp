@@ -40,8 +40,9 @@ namespace EduConnect.API.Hubs
                 ConnectionId = Context.ConnectionId,
                 UserId = user.UserId
             };
+            await _connectionService.CreateNewConnection(connection);
             await base.OnConnectedAsync();
-        }
+         }
         public async Task SendMessage(Guid chatId, string content)
         {
             try
@@ -50,15 +51,9 @@ namespace EduConnect.API.Hubs
 
                 var user = await _userService.GetByEmail(userEmail);
 
-                var requests = await _chatService.GetRequestIdsByChatId(chatId);
+                var requests = await _chatService.GetRequestByChatId(chatId);
 
-                var senderRequest = requests.FirstOrDefault(r => r.RequestId == user.UserId);
-                if (senderRequest == null)
-                {
-                    Console.WriteLine("No hay Request en el chat proporcionado");
-                }
-
-                var receiverRequest = requests.FirstOrDefault(r => r.RequestId != user.UserId);
+                var receiverRequest = requests.FirstOrDefault(r => r.UserId != user.UserId);
 
                 // Guardar el mensaje en la base de datos
                 var message = new ChatMessage

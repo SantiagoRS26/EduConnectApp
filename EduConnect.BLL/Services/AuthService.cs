@@ -58,7 +58,7 @@ namespace EduConnect.BLL.Services
                     _configuration["Jwt:Issuer"],
                     _configuration["Jwt:Audience"],
                     claims,
-                    expires: DateTime.Now.AddMinutes(5),
+                    expires: DateTime.Now.AddMinutes(50),
                     signingCredentials: credentials
             );
 

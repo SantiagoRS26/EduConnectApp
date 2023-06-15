@@ -1,5 +1,6 @@
 ﻿using EduConnect.BLL.Interfaces;
 using EduConnect.DAL.Interface;
+using EduConnect.DAL.Repositories;
 using EduConnect.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,10 +15,12 @@ namespace EduConnect.BLL.Services
     {
         private readonly IGenericRepository<Chat> _chatRepository;
         private readonly IGenericRepository<ChatMessage> _chatMessageRepository;
-        public ChatService(IGenericRepository<Chat> chatRepository, IGenericRepository<ChatMessage> chatMessageRepository) 
+        private readonly IGenericRepository<Request> _requestRepository;
+        public ChatService(IGenericRepository<Chat> chatRepository, IGenericRepository<ChatMessage> chatMessageRepository,IGenericRepository<Request> requestRepository) 
         { 
             _chatRepository = chatRepository;
             _chatMessageRepository = chatMessageRepository;
+            _requestRepository = requestRepository;
         }
 
         public async Task<bool> CreateNewChat(Chat entity)
@@ -35,25 +38,21 @@ namespace EduConnect.BLL.Services
             return response;
         }
 
-        public async Task<IQueryable<Request>> GetRequestIdsByChatId(Guid chatId)
+        public async Task<IQueryable<Request>> GetRequestByChatId(Guid chatId)
         {
-            var query = await _chatRepository.GetById(chatId.ToString());
+            var queryChats = await _chatRepository.GetAll();
+            var chat = queryChats.FirstOrDefault(p => p.ChatId == chatId);
 
-            var request1 = query.RequestId1 ?? Guid.Empty;
-            var request2 = query.RequestId2 ?? Guid.Empty;
+            var Request = await _requestRepository.GetAll();
+            var responseRequest = Request.Where(p => p.RequestId == chat.RequestId1 || p.RequestId == chat.RequestId2);
+            
+            return responseRequest;
 
-            var requests = new List<Request>
-            {
-                new Request { RequestId = request1 },
-                new Request { RequestId = request2 }
-            };
-
-            return requests.AsQueryable();
         }
 
         public async Task<bool> UserBelongsChat(Guid userId, Guid chatId)
         {
-            var Requests = await GetRequestIdsByChatId(chatId);
+            var Requests = await GetRequestByChatId(chatId);
 
             var Response = Requests.FirstOrDefault(p => p.UserId == userId);
             if(Response == null) return false;
@@ -65,6 +64,12 @@ namespace EduConnect.BLL.Services
             var flag = await _chatMessageRepository.Create(message);
             if (flag != null) return flag;
             return false;
+        }
+
+        public async Task<IQueryable<Chat>> GetAll()
+        {
+            var response = await _chatRepository.GetAll();
+            return response;
         }
     }
 }

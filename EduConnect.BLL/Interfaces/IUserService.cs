@@ -12,9 +12,10 @@ namespace EduConnect.BLL.Interfaces
     {
         Task<IQueryable<User>> GetAll();
         Task<bool> CreateUser(User entityModel);
-        Task<bool> Delete(int id);
+        Task<bool> Delete(string id);
         Task<bool> Update(User entityModel);
         Task<User> GetById(string id);
         Task<User> GetByEmail(string email);
+        Task<IQueryable<object>> GetChats(User user);
     }
 }
