@@ -67,7 +67,7 @@ namespace EduConnect.API.Hubs
 
                 await _chatService.SaveMessage(message);
 
-                await Clients.Client(receiver.Email).SendAsync("ReceiveMessage", content);
+                await Clients.User(receiver.Email).SendAsync("ReceiveMessage", content);
             }
             catch (Exception ex)
             {

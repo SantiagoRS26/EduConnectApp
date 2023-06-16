@@ -8,7 +8,6 @@ namespace EduConnect.API.Providers
     {
         public string GetUserId(HubConnectionContext connection)
         {
-            // Get the email claim
             return connection.User?.FindFirst(ClaimTypes.Email)?.Value;
         }
     }
