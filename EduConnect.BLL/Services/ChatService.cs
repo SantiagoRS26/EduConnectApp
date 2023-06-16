@@ -50,6 +50,26 @@ namespace EduConnect.BLL.Services
 
         }
 
+        public async Task<IQueryable<User>> GetUsersByChatId(Guid chatId)
+        {
+            var queryChats = await _chatRepository.GetAll();
+            var chat = queryChats.FirstOrDefault(p => p.ChatId == chatId);
+
+            var Requests = await _requestRepository.GetAll();
+            var responseRequest = Requests.Where(p => p.RequestId == chat.RequestId1 || p.RequestId == chat.RequestId2);
+
+            var users = new List<User>();
+            foreach (var request in responseRequest)
+            {
+                if (request.User != null)
+                {
+                    users.Add(request.User);
+                }
+            }
+            return users.AsQueryable();
+        }
+
+
         public async Task<bool> UserBelongsChat(Guid userId, Guid chatId)
         {
             var Requests = await GetRequestByChatId(chatId);

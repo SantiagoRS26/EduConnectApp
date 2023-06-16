@@ -1,6 +1,7 @@
 ﻿using EduConnect.DAL.DataContext;
 using EduConnect.DAL.Interface;
 using EduConnect.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace EduConnect.DAL.Repositories
 
         public async Task<IQueryable<Request>> GetAll()
         {
-            return _dbContext.Requests;
+            return _dbContext.Requests.Include(p => p.User);
         }
 
         public async Task<bool> Create(Request entityModel)

@@ -15,5 +15,6 @@ namespace EduConnect.BLL.Interfaces
         Task<IQueryable<Request>> GetRequestByChatId(Guid chatId);
         Task<bool> UserBelongsChat(Guid userId, Guid chatId);
         Task<IQueryable<Chat>> GetAll();
+        Task<IQueryable<User>> GetUsersByChatId(Guid chatId);
     }
 }

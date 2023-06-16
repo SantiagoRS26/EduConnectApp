@@ -68,6 +68,12 @@ namespace EduConnect.BLL.Services
             return result;
         }
 
+        public async Task<IQueryable<Request>> GetUsersByRequestId(Guid userId)
+        {
+            var query = await _repositoryRequest.GetAll();
+            var result = query.Where(request => request.UserId == userId);
+            return result;
+        }
         public async Task<IQueryable<Request>> GetRequestsByCollegeId(Guid collegeId, Guid userId)
         {
             var query = await _repositoryRequest.GetAll();

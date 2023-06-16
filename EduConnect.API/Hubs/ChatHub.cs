@@ -33,14 +33,15 @@ namespace EduConnect.API.Hubs
         }
         public override async Task OnConnectedAsync()
         {
-            var userEmail = Context.User.FindFirst(ClaimTypes.Email).Value;
-            var user = await _userService.GetByEmail(userEmail);
-            var connection = new Connection()
-            {
-                ConnectionId = Context.ConnectionId,
-                UserId = user.UserId
-            };
-            await _connectionService.CreateNewConnection(connection);
+            //var userEmail = Context.User.FindFirst(ClaimTypes.Email).Value;
+            //var userIdd = Context.UserIdentifier;
+            //var user = await _userService.GetByEmail(userEmail);
+            //var connection = new Connection()
+            //{
+            //    ConnectionId = Context.ConnectionId,
+            //    UserId = user.UserId
+            //};
+            //await _connectionService.CreateNewConnection(connection);
             await base.OnConnectedAsync();
          }
         public async Task SendMessage(Guid chatId, string content)
@@ -51,9 +52,9 @@ namespace EduConnect.API.Hubs
 
                 var user = await _userService.GetByEmail(userEmail);
 
-                var requests = await _chatService.GetRequestByChatId(chatId);
+                var users = await _chatService.GetUsersByChatId(chatId);
 
-                var receiverRequest = requests.FirstOrDefault(r => r.UserId != user.UserId);
+                var receiver = users.FirstOrDefault(p => p.UserId != user.UserId);
 
                 // Guardar el mensaje en la base de datos
                 var message = new ChatMessage
@@ -66,12 +67,7 @@ namespace EduConnect.API.Hubs
 
                 await _chatService.SaveMessage(message);
 
-                var connectionsReceiver = await _connectionService.GetConnectionsByUserId(receiverRequest.UserId ?? new Guid());
-
-                foreach (var connection in connectionsReceiver)
-                {
-                    await Clients.Client(connection.ConnectionId).SendAsync("ReceiveMessage", content);
-                }
+                await Clients.Client(receiver.Email).SendAsync("ReceiveMessage", content);
             }
             catch (Exception ex)
             {
