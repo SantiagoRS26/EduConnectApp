@@ -126,7 +126,7 @@ namespace EduConnect.API.Controllers
                 Email = userData.Email,
                 Name = userData.Name,
                 LastName = userData.LastName,
-                Photo = userData.Photo,
+                Photo = userData.Photo
             };
             return Ok(response);
         }

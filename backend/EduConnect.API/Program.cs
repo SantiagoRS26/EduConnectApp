@@ -29,7 +29,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("http://localhost","localhost", "http://localhost:8080")
+        builder.WithOrigins("http://localhost","localhost", "http://localhost:8080", "http://localhost:3000")
                .AllowAnyHeader()
                .AllowAnyMethod()
                .AllowCredentials(); // Permite enviar las credenciales (tokens) en las solicitudes
