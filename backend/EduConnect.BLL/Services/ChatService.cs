@@ -30,13 +30,21 @@ namespace EduConnect.BLL.Services
             return false;
         }
 
-        public async Task<IQueryable<ChatMessage>> GetChatMessages(Guid chatId)
+        public async Task<IEnumerable<Dictionary<string, object>>> GetChatMessages(Guid chatId)
         {
             var query = await _chatMessageRepository.GetAll();
             var response = query.Where(p => p.ChatId == chatId)
-                                .OrderBy(p => p.SentDate);
+                                .OrderBy(p => p.SentDate)
+                                .Select(p => new Dictionary<string, object>
+                                {
+                            { "Message", p.Message },
+                            { "SentDate", p.SentDate.Value },
+                            { "SenderId", p.SenderId.ToString() }
+                                });
+
             return response;
         }
+
 
         public async Task<IQueryable<Request>> GetRequestByChatId(Guid chatId)
         {

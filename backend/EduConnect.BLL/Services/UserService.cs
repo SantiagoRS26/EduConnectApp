@@ -117,6 +117,7 @@ namespace EduConnect.BLL.Services
                 chat.ChatId,
                 chat.CreatedDate,
                 OtherUserId = chat.RequestId1Navigation.UserId == user.UserId ? chat.RequestId2Navigation.UserId : chat.RequestId1Navigation.UserId,
+                OtherImage = chat.RequestId1Navigation.UserId == user.UserId ? chat.RequestId2Navigation.User.Photo : chat.RequestId1Navigation.User.Photo,
                 name = chat.RequestId1Navigation.UserId == user.UserId ?
                         $"{chat.RequestId2Navigation.User.Name} {chat.RequestId2Navigation.User.LastName}" :
                         $"{chat.RequestId1Navigation.User.Name} {chat.RequestId1Navigation.User.LastName}"

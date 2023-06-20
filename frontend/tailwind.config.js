@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-
 const withMT = require("@material-tailwind/react/utils/withMT");
 
 module.exports = withMT({
@@ -7,11 +6,12 @@ module.exports = withMT({
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    color: {
-      transparent: 'none'
+    extend: {
+      backgroundImage: {
+        'login-bg': "url('/src/assets/img/canva.jpg')",
+      },
     },
-    extend: {},
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 });
 

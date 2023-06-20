@@ -2,8 +2,6 @@ import axios from "axios";
 
 const BASE_URL = "https://localhost:7057/api/Account";
 
-const token = localStorage.getItem('token');
-
 const accountController = {
     login: async (data) => {
         try {
@@ -52,13 +50,13 @@ const accountController = {
         }
     },
     userData: async () => {
+        const token = localStorage.getItem('token');
         try {
             const response = await axios.get(`${BASE_URL}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            console.log(response);
             return response.data;
         } catch (error) {
             throw error;

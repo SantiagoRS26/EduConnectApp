@@ -18,10 +18,8 @@ const Login = () => {
             setIsLoading(true);
 
             const response = await accountController.login(data);
-            console.log(response);
             localStorage.setItem('token', response.token);
             const tokenPrueba = localStorage.getItem('token');
-            console.log("Token del storage: " + tokenPrueba);
             navigate('/user/dashboard');
         } catch (error) {
             if (error.response && error.response.status === 404) {
@@ -35,15 +33,15 @@ const Login = () => {
     }
 
     return (
-        <div className="w-full h-screen flex flex-col items-start md:flex-row">
+        <div className="w-full h-screen flex flex-col items-start md:flex-row bg-login-bg bg-cover">
             <div className='relative w-full h-full flex flex-col md:w-1/2' >
                 <div className='absolute top-[20%] left-[10%] flex flex-col' >
                     <h1 className='text-4xl text-white font-bold my-4' > Convierte tus ideas en realidad</h1>
                     <p className='text-xl text-white font-normal'>Aqui va una frase toda inspiradora que no se me ocurrio</p>
                 </div>
                 <img src={COVER_IMAGE} className="w-full h-full object-cover" />
-            </div >
-            <div className='w-full h-full bg-[#f5f5f5] flex flex-col p-20 justify-between md:w-1/2'>
+            </div>
+            <div className='w-full h-full flex flex-col p-20 justify-between md:w-1/2 backdrop-blur-md bg-white/60 space-y-5'>
                 <h1 className='text-xl text- [#060606] font-semibold'>EduConnect</h1>
                 <div className='w-full flex flex-col'>
                     <div className='w-full flex flex-col mb-5'>

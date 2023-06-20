@@ -29,19 +29,22 @@ namespace EduConnect.API.Controllers
             var emailUser = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
             var user = await _userService.GetByEmail(emailUser);
 
-            var userBelongChat = await _chatService.UserBelongsChat(user.UserId,new Guid(idChat));
+            var userBelongChat = await _chatService.UserBelongsChat(user.UserId, new Guid(idChat));
             var messagesChat = await _chatService.GetChatMessages(new Guid(idChat));
 
-            var jsonOptions = new JsonSerializerOptions
+            var response = new
             {
-                ReferenceHandler = ReferenceHandler.Preserve,
-                IgnoreReadOnlyProperties = true
+                UserId = user.UserId,
+                Messages = messagesChat
             };
 
-            var json = JsonSerializer.Serialize(messagesChat, jsonOptions);
+            var json = JsonSerializer.Serialize(response);
 
             return Ok(json);
         }
+
+
+
 
         [HttpGet("chats")]
         [Authorize]

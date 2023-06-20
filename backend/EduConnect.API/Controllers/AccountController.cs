@@ -121,14 +121,22 @@ namespace EduConnect.API.Controllers
             var emailUser = HttpContext.User.FindFirst(ClaimTypes.Email).Value;
             if(emailUser == null) return BadRequest(ModelState);
             User userData = await _userService.GetByEmail(emailUser);
+
             var response = new User
             {
                 Email = userData.Email,
                 Name = userData.Name,
                 LastName = userData.LastName,
-                Photo = userData.Photo
+                Photo = userData.Photo,
+                Role = userData.Role
             };
-            return Ok(response);
+            var options = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+            };
+
+            var jsonString = JsonSerializer.Serialize(response, options);
+            return Ok(jsonString);
         }
 
         [HttpPost("uploadprofilepicture")]
