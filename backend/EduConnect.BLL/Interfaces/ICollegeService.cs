@@ -12,7 +12,7 @@ namespace EduConnect.BLL.Interfaces
     {
         Task<bool> CollegeExists(string collegeId);
         Task<College> GetCollegeById(string collegeId);
-
         Task<IQueryable<College>> GetCollegesWithinRadius(Geometry circle);
+        Task<IQueryable<Object>> GetAll();
     }
 }

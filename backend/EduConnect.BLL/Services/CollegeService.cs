@@ -42,6 +42,26 @@ namespace EduConnect.BLL.Services
             return filteredColleges.AsQueryable();
         }
 
+        public async Task<IQueryable<object>> GetAll()
+        {
+            var query = await _repository.GetAll();
+            var result = query.Select(college => new
+            {
+                college.CollegeId,
+                college.Name,
+                college.Address,
+                college.Latitude,
+                college.Longitude,
+                college.AdditionalInfo,
+                college.AvailableSlots,
+                college.CityId
+            });
+
+            return result;
+        }
+
+
+
 
     }
 }

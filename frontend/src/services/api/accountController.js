@@ -61,6 +61,35 @@ const accountController = {
         } catch (error) {
             throw error;
         }
+    },
+    uploadprofilePicture: async (data) => {
+        const token = localStorage.getItem('token');
+        try {
+            console.log(data);
+            const response = await axios.post(`${BASE_URL}/uploadprofilepicture`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                    //"Content-Type": "multipart/form-data"
+                },
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    updateUser: async (data) => {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await axios.patch(`${BASE_URL}/updateUser`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "multipart/form-data"
+                },
+            });
+            return response.data;
+        } catch (error) {
+            throw error;
+        }
     }
 }
 

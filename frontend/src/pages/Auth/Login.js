@@ -19,14 +19,15 @@ const Login = () => {
 
             const response = await accountController.login(data);
             localStorage.setItem('token', response.token);
-            const tokenPrueba = localStorage.getItem('token');
             navigate('/user/dashboard');
+
         } catch (error) {
             if (error.response && error.response.status === 404) {
                 setLoginError('Usuario no encontrado, verifique las credenciales');
             } else if (error.response.status === 404) {
-                console.error(error);
+                console.error("EL ERROR ES:  " + error);
             }
+            console.error(error);
         } finally {
             setIsLoading(false);
         }
@@ -39,7 +40,7 @@ const Login = () => {
                     <h1 className='text-4xl text-white font-bold my-4' > Convierte tus ideas en realidad</h1>
                     <p className='text-xl text-white font-normal'>Aqui va una frase toda inspiradora que no se me ocurrio</p>
                 </div>
-                <img src={COVER_IMAGE} className="w-full h-full object-cover" />
+                <img src={COVER_IMAGE} className="w-full h-full object-cover" alt="" />
             </div>
             <div className='w-full h-full flex flex-col p-20 justify-between md:w-1/2 backdrop-blur-md bg-white/60 space-y-5'>
                 <h1 className='text-xl text- [#060606] font-semibold'>EduConnect</h1>
@@ -81,9 +82,8 @@ const Login = () => {
                             <Button className="bg-black text-lg h-12">Registrarse</Button>
                         </div>
                     </form>
-                    <div className="w-full flex items-center justify-center relative py-2">
-                        <div className="w-full h-[1px] bg-black"></div>
-                        <p className="text-lg absolute text-black/80 bg-[#f5f5f5]">O Tambien</p>
+                    <div className="w-full flex flex-col items-center justify-center relative py-2">
+                        <div className="divider">O Tambien</div>
                     </div>
                     <div className="w-full flex flex-col my-10">
                         <Button className="bg-white text-black text-lg border-black border-solid h-12">Iniciar Sesion con Google</Button>

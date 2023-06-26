@@ -2,11 +2,11 @@ import axios from "axios";
 
 const BASE_URL = "https://localhost:7057/api/Chat";
 
-const token = localStorage.getItem('token');
 
 const chatController = {
     GetChats: async () => {
         try {
+            const token = localStorage.getItem('token');
             const response = await axios.get(`${BASE_URL}/Chats`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -19,6 +19,7 @@ const chatController = {
     },
     messages: async (data) =>{
         try {
+            const token = localStorage.getItem('token');
             const response = await axios.get(`${BASE_URL}/messages?idChat=${data}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,

@@ -73,7 +73,7 @@ namespace EduConnect.BLL.Services
         {
             return await _repository.GetAll();
         }
-
+        
         public async Task<User> GetByEmail(string email)
         {
             var userData = await _repository.GetAll();

@@ -16,5 +16,10 @@
     <ProjectReference Include="..\EduConnect.BLL\EduConnect.BLL.csproj" />
     <ProjectReference Include="..\EduConnect.Models\EduConnect.Models.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="pictureProfiles\" />
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
 	
 </Project>

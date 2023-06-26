@@ -18,14 +18,17 @@ import {
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import defaultPhoto from "../assets/img/avatar/avatarDefault.jpg";
+
 import { Avatar } from "@nextui-org/react";
 
 import accountController from "../services/api/accountController";
 
 import Skeleton from 'react-loading-skeleton';
+
 import "../../node_modules/react-loading-skeleton/dist/skeleton.css";
 
-const SideBar = () => {
+const SideBar = ({ dataUser = () => {} }) => {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -37,6 +40,7 @@ const SideBar = () => {
                 const data = await accountController.userData();
                 if (data) {
                     setUserData(data);
+                    dataUser(data);
                 }
 
             } catch (error) {
@@ -58,17 +62,17 @@ const SideBar = () => {
                     </div>
                     <div className="w-full flex justify-center flex-col items-center my-10">
                         <Avatar
-                            src="https://i.pravatar.cc/150?u=a04258114e29026702d"
+                            src={userData ? (userData.photo ? `https://localhost:7057/pictures/${userData.photo}` : defaultPhoto) : (<Skeleton containerClassName="flex-1" circle="true" />)}
                             css={{ size: "$20" }}
                             bordered
                             color="success"
                         />
                         <Typography className="my-3 flex w-full justify-center" variant="h5" color="blue-gray">
-                            {userData ? (userData.Name + " " + userData.LastName) : (<Skeleton containerClassName="flex-1" count={1} />)}
+                            {userData ? (userData.name + " " + userData.lastName) : (<Skeleton containerClassName="flex-1" count={1} />)}
                         </Typography>
                         <Typography color="blue-gray">
                             {userData ? (
-                                userData.Role.RoleName === "user" ? <span>Usuario</span> : null
+                                userData.role === "user" ? <span>Usuario</span> : null
                             ) : (
                                 <Skeleton containerClassName="flex-1" count={1} />
                             )}
@@ -96,7 +100,7 @@ const SideBar = () => {
                             <Chip value="14" size="sm" variant="ghost" color="blue-gray" className="rounded-full" />
                         </ListItemSuffix>
                     </ListItem>
-                    <ListItem>
+                    <ListItem selected={location.pathname === '/user/profile'} onClick={() => navigate('/user/profile')}>
                         <ListItemPrefix>
                             <UserCircleIcon className="h-5 w-5" />
                         </ListItemPrefix>

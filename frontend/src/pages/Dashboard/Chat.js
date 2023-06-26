@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import SideBar from "../../components/SiderBar";
 import chatController from "../../services/api/chatController";
 import { useParams } from "react-router-dom";
-import SignalRClient from "../../utils/SignalRClient";
 import { Button } from "@material-tailwind/react";
 import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
+import createSignalRConnection from '../../utils/SignalRClient';
+
 
 const Chat = () => {
     const { chatId } = useParams();
@@ -14,6 +15,32 @@ const Chat = () => {
     const [messageInput, setMessageInput] = useState("");
     const textareaRef = useRef(null);
     const messagesListRef = useRef(null);
+    const [connection, setConnection] = useState(null);
+
+
+    useEffect(() => {
+        const initializeSignalRConnection = async () => {
+            const signalRConnection = createSignalRConnection();
+
+            signalRConnection
+                .start()
+                .then(() => {
+                    console.log("Conexión establecida con el servidor SignalR");
+                })
+                .catch((error) => {
+                    console.error(
+                        "Error al establecer la conexión con el servidor SignalR",
+                        error
+                    );
+                });
+
+            setConnection(signalRConnection); // Capturar la conexión en el estado
+        };
+
+        initializeSignalRConnection();
+    }, []);
+
+
 
     useEffect(() => {
         const fetchChatMessages = async () => {
@@ -32,16 +59,17 @@ const Chat = () => {
 
         fetchChatMessages();
 
-        SignalRClient.on("ReceiveMessage", (message) => {
-            console.log("Nuevo mensaje recibido:", message);
-            setChatMessages((prevMessages) => [...prevMessages, message]);
-            scrollMessagesToBottom();
-        });
+        if (connection) {
+            connection.on("ReceiveMessage", (message) => {
+                setChatMessages((prevMessages) => [...prevMessages, message]);
+                scrollMessagesToBottom();
+            });
 
-        return () => {
-            SignalRClient.off("ReceiveMessage");
-        };
-    }, []);
+            return () => {
+                connection.off("ReceiveMessage");
+            };
+        }
+    }, [chatId, connection]);
 
     const handleMessageChange = (e) => {
         setMessageInput(e.target.value);
@@ -67,22 +95,28 @@ const Chat = () => {
         // Obtener el contenido del mensaje
         const content = messageInput.trim();
         if (content !== "") {
-            // Enviar el mensaje al hub del lado del servidor
-            SignalRClient.invoke("SendMessage", chatId, content)
-                .then(() => {
-                    // Limpiar el input del mensaje
-                    setMessageInput("");
-                    const sentMessage = {
-                        SenderId: userId,
-                        Message: content,
-                        SentDate: new Date().toISOString()
-                    };
-                    setChatMessages((prevMessages) => [...prevMessages, sentMessage]);
-                    scrollMessagesToBottom();
-                })
-                .catch((error) => {
-                    console.error("Error al enviar el mensaje:", error);
-                });
+            // Verificar que la conexión esté establecida
+            if (connection) {
+                // Enviar el mensaje al hub del lado del servidor
+                connection
+                    .invoke("SendMessage", chatId, content)
+                    .then(() => {
+                        // Limpiar el input del mensaje
+                        setMessageInput("");
+                        const sentMessage = {
+                            SenderId: userId,
+                            Message: content,
+                            SentDate: new Date().toISOString()
+                        };
+                        setChatMessages((prevMessages) => [...prevMessages, sentMessage]);
+                        scrollMessagesToBottom();
+                    })
+                    .catch((error) => {
+                        console.error("Error al enviar el mensaje:", error);
+                    });
+            } else {
+                console.error("La conexión no está establecida.");
+            }
         }
     };
 

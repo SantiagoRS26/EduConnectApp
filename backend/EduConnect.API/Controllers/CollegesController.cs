@@ -39,5 +39,12 @@ namespace EduConnect.API.Controllers
 
             return Ok(collegesWithinRadius);
         }
+
+        [HttpGet("colleges")]
+        public async Task<IActionResult> GetColleges()
+        {
+            var schools = await _collegeService.GetAll();
+            return Ok(schools);
+        }
     }
 }

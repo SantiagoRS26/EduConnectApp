@@ -13,6 +13,7 @@ using System.Text;
 using Microsoft.AspNetCore.Cors;
 using EduConnect.API.Providers;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,6 +103,14 @@ if (app.Environment.IsDevelopment())
 app.UseCors();
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+           Path.Combine(builder.Environment.ContentRootPath, "pictureProfiles")),
+    RequestPath = "/pictures"
+});
+
 
 app.UseAuthentication();
 app.UseAuthorization();

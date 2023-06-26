@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
+
 import SideBar from '../../components/SiderBar';
+
 import {
   List,
   ListItem,
@@ -7,12 +9,20 @@ import {
   Avatar,
   Card,
   Typography,
+  Badge
 } from "@material-tailwind/react";
+
 import { useNavigate } from "react-router-dom";
+
 import chatController from "../../services/api/chatController";
 
 import Skeleton from 'react-loading-skeleton';
+
 import "../../../node_modules/react-loading-skeleton/dist/skeleton.css";
+
+import createSignalRConnection from '../../utils/SignalRClient';
+
+import defaultPhoto from "../../assets/img/avatar/avatarDefault.jpg";
 
 const ChatList = () => {
   const [chatsUser, setChatsUser] = useState(null);
@@ -21,6 +31,14 @@ const ChatList = () => {
   const handleChatClick = (chatId) => {
     navigate(`/user/chat/${chatId}`);
   };
+
+  const connection = createSignalRConnection();
+  connection.start()
+    .then(() => {
+    })
+    .catch((error) => {
+      console.error("Error al establecer la conexión con el servidor SignalR", error);
+    });
 
   useEffect(() => {
     const fetchChatsUser = async () => {
@@ -49,7 +67,7 @@ const ChatList = () => {
           {chatsUser ? (chatsUser.map((chat) => (
             <ListItem key={chat.ChatId} onClick={() => handleChatClick(chat.ChatId)}>
               <ListItemPrefix>
-                <Avatar withBorder={true} color="green" variant="circular" alt={chat.name} src={chat.OtherImage || "https://t3.ftcdn.net/jpg/03/39/45/96/360_F_339459697_XAFacNQmwnvJRqe1Fe9VOptPWMUxlZP8.jpg"} />
+                <Avatar withBorder={true} color="green" variant="circular" alt={chat.name} src={`https://localhost:7057/pictures/${chat.OtherImage}` || (defaultPhoto)} />
               </ListItemPrefix>
               <div>
                 <Typography variant="h6" color="blue-gray">

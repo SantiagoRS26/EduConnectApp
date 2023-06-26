@@ -1,7 +1,16 @@
 import React from 'react';
 import SideBar from '../../components/SiderBar';
+import createSignalRConnection from '../../utils/SignalRClient';
 
 const Home = () => {
+  const connection = createSignalRConnection();
+  connection.start()
+    .then(() => {
+    })
+    .catch((error) => {
+      console.error("Error al establecer la conexión con el servidor SignalR", error);
+    });
+
   return (
     <div className="flex">
       <div className="w-[20rem]">

@@ -122,21 +122,17 @@ namespace EduConnect.API.Controllers
             if(emailUser == null) return BadRequest(ModelState);
             User userData = await _userService.GetByEmail(emailUser);
 
-            var response = new User
+            object response = new
             {
                 Email = userData.Email,
                 Name = userData.Name,
                 LastName = userData.LastName,
                 Photo = userData.Photo,
-                Role = userData.Role
-            };
-            var options = new JsonSerializerOptions
-            {
-                ReferenceHandler = ReferenceHandler.Preserve,
+                Role = userData.Role.RoleName,
+                CollegeId = userData.CollegeId
             };
 
-            var jsonString = JsonSerializer.Serialize(response, options);
-            return Ok(jsonString);
+            return Ok(response);
         }
 
         [HttpPost("uploadprofilepicture")]
@@ -159,13 +155,13 @@ namespace EduConnect.API.Controllers
             string extension = Path.GetExtension(file.FileName);
             bool validExtension = validExtensions.Contains(extension.ToLower());
 
-            if(!validExtension)
+            if (!validExtension)
             {
                 return BadRequest("Formato de imagen no válido.");
             }
 
             var userEmailClaim = HttpContext.User.FindFirst(ClaimTypes.Email);
-            if(userEmailClaim == null)
+            if (userEmailClaim == null)
             {
                 return BadRequest("Token Invalido.");
             }
@@ -181,7 +177,7 @@ namespace EduConnect.API.Controllers
 
             string folderPath = "pictureProfiles";
             string userId = user.UserId.ToString();
-            string fileName = $"{DateTime.Now.ToString("yyyyMMdd_HHmmss")}_{file.FileName}";
+            string fileName = $"{DateTime.Now:yyyyMMdd_HHmmss}_{file.FileName}";
             string userFolderPath = Path.Combine(Directory.GetCurrentDirectory(), folderPath, userId);
 
             if (!Directory.Exists(userFolderPath))
@@ -189,13 +185,29 @@ namespace EduConnect.API.Controllers
                 Directory.CreateDirectory(userFolderPath);
             }
 
-            string patchFile = Path.Combine(userFolderPath, fileName);
+            if (user.Photo != null)
+            {
+                string existingFolderPath = Path.Combine(Directory.GetCurrentDirectory(), folderPath, userId);
+                string existingFileName = Path.GetFileName(user.Photo);
+                string existingFilePath = Path.Combine(existingFolderPath, existingFileName);
+
+
+                // Eliminar la imagen existente si ya tiene una
+                if (!string.IsNullOrEmpty(user.Photo) && System.IO.File.Exists(existingFilePath))
+                {
+                    System.IO.File.Delete(existingFilePath);
+                }
+            }
+            
+
+            string filePath = Path.Combine(userFolderPath, fileName);
 
             try
             {
-                user.Photo = patchFile;
+                // Guarda la ruta relativa de la foto, que puede ser usada para formar una URL en el cliente
+                user.Photo = $"{userId}/{fileName}";
                 await _userService.Update(user);
-                using (var stream = new FileStream(patchFile, FileMode.Create))
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     file.CopyTo(stream);
                 }
@@ -203,9 +215,9 @@ namespace EduConnect.API.Controllers
             }
             catch (Exception ex)
             {
-
                 return BadRequest(ex);
             }
         }
+
     }
 }

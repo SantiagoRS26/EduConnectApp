@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace EduConnect.API.Hubs
 {
@@ -67,7 +69,14 @@ namespace EduConnect.API.Hubs
 
                 await _chatService.SaveMessage(message);
 
-                await Clients.User(receiver.Email).SendAsync("ReceiveMessage", message);
+                var messageData = new Dictionary<string, object>
+                {
+                    { "SenderId", message.SenderId },
+                    { "Message", message.Message },
+                    { "SentDate", message.SentDate }
+                };
+
+                await Clients.User(receiver.Email).SendAsync("ReceiveMessage", messageData);
             }
             catch (Exception ex)
             {

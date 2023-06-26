@@ -13,9 +13,9 @@ namespace EduConnect.API.Models
         [EmailAddress(ErrorMessage = "El email proporcionado no es válido.")]
         public string? Email { get; set; }
 
-        [MinLength(6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres.")]
-        [RegularExpression(@"^(?=.*[A-Z]).{8,}$",
-            ErrorMessage = "La contraseña debe contener al menos 8 caracteres y una letra mayúscula")]
+        //[MinLength(6, ErrorMessage = "La contraseña debe tener al menos 6 caracteres.")]
+        //[RegularExpression(@"^(?=.*[A-Z]).{8,}$",
+            //ErrorMessage = "La contraseña debe contener al menos 8 caracteres y una letra mayúscula")]
         public string? Password { get; set; }
 
         public Guid? CollegeId { get; set; }
