@@ -35,6 +35,7 @@ const SideBar = ({ dataUser = () => {} }) => {
     const [userData, setUserData] = useState(null);
 
     useEffect(() => {
+        console.log("Entro a use effect");
         const fetchUserData = async () => {
             try {
                 const data = await accountController.userData();
@@ -51,6 +52,7 @@ const SideBar = ({ dataUser = () => {} }) => {
         fetchUserData();
     }, []);
 
+    console.log("Antes del return");
     return (
         <div className="bg-gradient-to-tr from-gray-50 to-gray-200 fixed h-full w-full max-w-[20rem] ">
             <Card className="fixed h-full w-full max-w-[20rem] p-4 shadow-2xl backdrop-blur-sm bg-white/10 text-white ">

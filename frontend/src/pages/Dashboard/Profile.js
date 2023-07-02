@@ -215,7 +215,7 @@ const Profile = () => {
                                         <p className="text-gray-600 w-full">Para cambiar sus datos personales, edite y guarde desde aquí</p>
                                         <div className="flex w-full flex-col space-y-5">
                                             <div className="flex w-full space-x-5">
-                                                <Input label="Nombre" fullWidth="true" {...register("Name")}></Input>
+                                                <Input label="Nombre" placeholder={userData?.name} fullWidth="true" {...register("Name")}></Input>
                                                 <Input label="Apellidos" fullWidth="true" {...register("LastName")} ></Input>
                                             </div>
                                         </div>
@@ -249,14 +249,6 @@ const Profile = () => {
                                     </Button>
                                 </div>
                             </form>
-                        </TabPanel>
-                        <TabPanel value="2">
-                            <Card className="border-[1px]">
-                                <CardBody>
-                                    <h1>Aqui va el mapa</h1>
-                                    <Map />
-                                </CardBody>
-                            </Card>
                         </TabPanel>
                     </TabsBody>
                 </Tabs>

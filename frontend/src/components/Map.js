@@ -10,7 +10,6 @@ import { Button } from "@material-tailwind/react";
 const Map = ({ onCollegeSelect, dataUser }) => {
     const [loading, setLoading] = useState(true);
     const [colleges, setColleges] = useState(null);
-    const [selectedLocation, setSelectedLocation] = useState(null);
     const [selectedCollege, setSelectedCollege] = useState(null);
 
 
@@ -32,21 +31,31 @@ const Map = ({ onCollegeSelect, dataUser }) => {
         const getColleges = async () => {
             try {
                 const collegesData = await collegesController.colleges();
-                // Aquí puedes guardar las ubicaciones en el estado o hacer cualquier otra manipulación necesaria
                 setColleges(collegesData);
+
+                if (dataUser && dataUser.collegeId) {
+                    const selected = collegesData.find(college => college.collegeId === dataUser.collegeId);
+                    setSelectedCollege(selected);
+                    onCollegeSelect(selected);
+                    console.log(selectedCollege);
+                }
+
                 setLoading(false);
             } catch (error) {
                 console.error('Error al obtener las ubicaciones:', error);
             }
         };
 
-        getColleges();
-    }, []);
+        if (dataUser && dataUser.collegeId) {
+            getColleges();
+        }
+    }, [dataUser]);
 
 
     if (loading) {
         return <h1>Cargando</h1>;
     }
+
 
     return (
         <div>
@@ -66,7 +75,7 @@ const Map = ({ onCollegeSelect, dataUser }) => {
                     <Marker
                         key={index}
                         position={[college.latitude, college.longitude]}
-                        icon={dataUser && dataUser.collegeId==college.collegeId ? (markerIconUser) : (college==selectedCollege ? markerIconUser : markerIcon)}
+                        icon={dataUser && dataUser.collegeId == college.collegeId ? (markerIconUser) : (college == selectedCollege ? markerIconUser : markerIcon)}
                         eventHandlers={{
                             click: () => {
                                 setSelectedCollege(college);
