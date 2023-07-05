@@ -57,11 +57,11 @@ const ChatList = () => {
   }, []);
 
   return (
-    <div className="flex">
-      <div className="w-[20rem]">
+    <div className="flex h-screen">
+      <div className="flex-initial">
         <SideBar />
       </div>
-      <Card className="h-screen flex-1 flex justify-center items-center bg-gradient-to-r from-blue-200 to-cyan-200">
+      <div className="flex-grow h-full flex justify-center items-center bg-gradient-to-r from-blue-200 to-cyan-200">
         <List className="w-4/5 h-4/5 my-20 backdrop-blur-md bg-white/25 space-y-5 rounded-3xl overflow-y-auto">
 
           {chatsUser ? (chatsUser.map((chat) => (
@@ -85,7 +85,7 @@ const ChatList = () => {
           )}
 
         </List>
-      </Card>
+      </div>
     </div>
   );
 };

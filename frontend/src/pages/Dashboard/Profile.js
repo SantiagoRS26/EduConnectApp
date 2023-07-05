@@ -70,12 +70,11 @@ const Profile = () => {
 
     return (
         <div className="flex bg-white">
-            <div className="w-[20rem]">
+            <div className="flex-initial">
                 <SideBar dataUser={dataUser} />
-
             </div>
-            <div className="flex-1 bg-white flex justify-center flex-col items-center space-y-3 mt-8">
-                <div className="flex w-11/12">
+            <div className="flex-grow bg-white flex justify-center flex-col items-center space-y-3 mt-8">
+                <div className="flex w-full md:w-11/12">
                     <div className="flex p-5 bg-gradient-to-r from-teal-200 to-teal-100 w-full flex-col space-y-3 rounded-2xl">
                         <h1 className="text-2xl">
                             Configuración de cuenta
@@ -90,7 +89,7 @@ const Profile = () => {
                         </Breadcrumbs>
                     </div>
                 </div>
-                <Tabs className="w-11/12" value={activeTab}>
+                <Tabs className="w-full md:w-11/12" value={activeTab}>
                     <TabsHeader className="rounded-none rounded-t-md border-blue-gray-50 bg-transparent p-0 border-x-[1px] border-t-[1px]"
                         indicatorProps={{
                             className: "bg-transparent border-b-2 border-blue-500 shadow-none rounded-none",
@@ -120,8 +119,8 @@ const Profile = () => {
                     <TabsBody className="border rounded-b-md">
                         <TabPanel value="1" className="flex w-full flex-col space-y-5">
                             <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col space-y-5">
-                                <div className="flex w-full space-x-5">
-                                    <Card className="flex w-1/2 border-[1px] shadow-sm">
+                                <div className="flex w-full gap-5 flex-col md:flex-row">
+                                    <Card className="flex w-full md:w-1/2 border-[1px] shadow-sm">
                                         <CardBody className="flex flex-col items-center">
                                             <h1 className="text-xl text-black font-medium w-full">Cambiar Foto</h1>
                                             <p className="text-gray-600 w-full">Cambia tu foto de perfil desde aquí</p>
@@ -196,7 +195,7 @@ const Profile = () => {
                                             </div>
                                         </CardBody>
                                     </Card>
-                                    <Card className="flex w-1/2 flex-col border-[1px] shadow-sm">
+                                    <Card className="flex w-full md:w-1/2 flex-col border-[1px] shadow-sm">
                                         <CardBody className="flex flex-col items-center">
                                             <h1 className="text-xl text-black font-medium w-full">Cambiar la contraseña</h1>
                                             <p className="text-gray-600 w-full">Para cambiar su contraseña por favor confirme aquí</p>
@@ -216,7 +215,7 @@ const Profile = () => {
                                         <div className="flex w-full flex-col space-y-5">
                                             <div className="flex w-full space-x-5">
                                                 <Input label="Nombre" placeholder={userData?.name} fullWidth="true" {...register("Name")}></Input>
-                                                <Input label="Apellidos" fullWidth="true" {...register("LastName")} ></Input>
+                                                <Input label="Apellidos" placeholder={userData?.lastName} fullWidth="true" {...register("LastName")} ></Input>
                                             </div>
                                         </div>
                                     </CardBody>

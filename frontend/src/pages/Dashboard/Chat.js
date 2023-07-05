@@ -137,10 +137,10 @@ const Chat = () => {
 
     return (
         <div className="flex">
-            <div className="w-[20rem]">
+            <div className="flex-initial">
                 <SideBar />
             </div>
-            <div className="h-screen flex-1 flex justify-center items-center bg-gradient-to-r from-blue-200 to-cyan-200">
+            <div className="h-screen flex-grow flex justify-center items-center bg-gradient-to-r from-blue-200 to-cyan-200">
                 <div className="h-4/5 w-4/5 backdrop-blur-md bg-white/25 rounded-3xl overflow-y-auto p-16 flex flex-col">
                     <div className="w-full h-[90%] flex flex-col overflow-auto" ref={messagesListRef}>
                         {isLoading ? (
