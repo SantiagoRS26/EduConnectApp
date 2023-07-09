@@ -98,13 +98,13 @@ const SideBar = ({ dataUser = () => { } }) => {
                     </div>
 
                     <List className="h-3/5 flex transition-all duration-1000 justify-center space-y-3 w-full min-w-full">
-                        <ListItem selected={location.pathname === '/user/dashboard'} onClick={() => navigate('/user/dashboard')}>
+                        <ListItem className={`rounded-full hover:bg-gray-500/30 ${location.pathname === '/user/dashboard' ? 'bg-gray-500/20' : ''}`} selected={location.pathname === '/user/dashboard'} onClick={() => navigate('/user/dashboard')}>
                             <ListItemPrefix>
                                 <PresentationChartBarIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             {sidebarOpen ? 'Inicio' : ''}
                         </ListItem>
-                        <ListItem selected={location.pathname === '/user/chats'} onClick={() => navigate('/user/chats')}>
+                        <ListItem className={`rounded-full hover:bg-gray-500/30 ${location.pathname === '/user/chats' ? 'bg-gray-500/20' : ''}`} selected={location.pathname === '/user/chats'} onClick={() => navigate('/user/chats')}>
                             <ListItemPrefix>
                                 <ChatBubbleBottomCenterTextIcon className="h-5 w-5" />
                             </ListItemPrefix>
@@ -113,13 +113,13 @@ const SideBar = ({ dataUser = () => { } }) => {
                                 <Chip value="14" size="sm" variant="ghost" color="blue-gray" className="rounded-full" />
                             </ListItemSuffix>) : ''}
                         </ListItem>
-                        <ListItem selected={location.pathname === '/user/profile'} onClick={() => navigate('/user/profile')}>
+                        <ListItem className={`rounded-full hover:bg-gray-500/30 ${location.pathname === '/user/profile' ? 'bg-gray-500/20' : ''}`} selected={location.pathname === '/user/profile'} onClick={() => navigate('/user/profile')}>
                             <ListItemPrefix>
                                 <UserCircleIcon className="h-5 w-5" />
                             </ListItemPrefix>
                             {sidebarOpen ? 'Perfil' : ''}
                         </ListItem>
-                        <ListItem>
+                        <ListItem className={`rounded-full hover:bg-gray-500/30 ${location.pathname === '/user/config' ? 'bg-gray-500/20' : ''}`}>
                             <ListItemPrefix>
                                 <Cog6ToothIcon className="h-5 w-5" />
                             </ListItemPrefix>
@@ -127,7 +127,7 @@ const SideBar = ({ dataUser = () => { } }) => {
                         </ListItem>
                     </List>
                     <List className="flex-1 justify-end min-w-full truncate">
-                        <ListItem>
+                        <ListItem className="rounded-full">
                             <ListItemPrefix>
                                 <PowerIcon className="h-5 w-5" />
                             </ListItemPrefix>
