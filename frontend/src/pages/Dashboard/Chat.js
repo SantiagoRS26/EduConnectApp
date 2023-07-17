@@ -16,6 +16,8 @@ const Chat = () => {
     const textareaRef = useRef(null);
     const messagesListRef = useRef(null);
     const [connection, setConnection] = useState(null);
+    const [currentDate, setCurrentDate] = useState(null);
+
 
 
     useEffect(() => {
@@ -51,6 +53,13 @@ const Chat = () => {
                     setChatMessages(data.Messages);
                     setUserId(data.UserId.toUpperCase());
                     scrollMessagesToBottom();
+
+                    const firstMessageDate = new Date(data.Messages[0].SentDate);
+                    const formattedDate = formatDate(firstMessageDate);
+
+                    if (formattedDate !== currentDate) {
+                        setCurrentDate(formattedDate);
+                    }
                 }
             } catch (error) {
                 console.log(error);
@@ -135,6 +144,47 @@ const Chat = () => {
         messagesListRef.current.scrollTop = messagesListRef.current.scrollHeight;
     };
 
+    const formatTime = (dateString) => {
+        const date = new Date(dateString);
+        let hours = date.getHours();
+        let amOrPm = 'AM';
+
+        if (hours >= 12) {
+            amOrPm = 'PM';
+            if (hours > 12) {
+                hours -= 12;
+            }
+        }
+
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+
+        const formattedTime = `${hours}:${minutes} ${amOrPm}`;
+        return formattedTime;
+    };
+
+    const formatDate = (dateString) => {
+        const today = new Date();
+        const date = new Date(dateString);
+      
+        if (
+            date.getDate() === today.getDate() &&
+            date.getMonth() === today.getMonth() &&
+            date.getFullYear() === today.getFullYear()
+        ) {
+            return "Hoy";
+        } else if (
+            date.getDate() === today.getDate() - 1 &&
+            date.getMonth() === today.getMonth() &&
+            date.getFullYear() === today.getFullYear()
+        ) {
+            return "Ayer";
+        } else {
+            const formattedDate = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+            return formattedDate;
+        }
+    };
+
+
     return (
         <div className="flex">
             <div className="flex-initial">
@@ -142,33 +192,41 @@ const Chat = () => {
             </div>
             <div className="h-screen flex-grow flex justify-center items-center bg-gradient-to-r from-blue-200 to-cyan-200">
                 <div className="h-4/5 w-4/5 backdrop-blur-md bg-white/25 rounded-3xl overflow-y-auto p-16 flex flex-col">
-                    <div className="w-full h-[90%] flex flex-col overflow-auto" ref={messagesListRef}>
+                    <div className="w-full h-[90%] flex flex-col overflow-auto scrollbar" ref={messagesListRef}>
                         {isLoading ? (
                             <div className="text-white">Loading...</div>
                         ) : (
-                            <>
+                            <div>
                                 {chatMessages.map((message, index) => (
-                                    <div
-                                        key={index}
-                                        className={`chat ${userId === message.SenderId ? "chat-end" : "chat-start"
-                                            }`}
-                                    >
-                                        <div className="chat-header">
-                                            <time className="text-xs opacity-50">
-                                                {message.SentDate}
-                                            </time>
+                                    <div key={index}>
+                                        {index === 0 || formatDate(new Date(message.SentDate)) !== formatDate(new Date(chatMessages[index - 1].SentDate)) ? (
+                                            <div className="flex justify-center items-center">
+                                                <div className="p-4 bg-gray-400/30 rounded-lg">
+                                                    {formatDate(new Date(message.SentDate))}
+                                                </div>
+                                            </div>
+                                        ) : null}
+                                        <div
+                                            className={`chat ${userId === message.SenderId ? "chat-end" : "chat-start"
+                                                }`}
+                                        >
+                                            <div className="chat-header">
+                                                <time className="text-xs opacity-50">
+                                                    {formatTime(message.SentDate)}
+                                                </time>
+                                            </div>
+                                            <div className="chat-bubble text-white">
+                                                {message.Message}
+                                            </div>
+                                            {userId === message.SenderId ? (
+                                                ""
+                                            ) : (
+                                                <div className="chat-footer opacity-50">Leido</div>
+                                            )}
                                         </div>
-                                        <div className="chat-bubble text-white">
-                                            {message.Message}
-                                        </div>
-                                        {userId === message.SenderId ? (
-                                            ""
-                                        ) : (
-                                            <div className="chat-footer opacity-50">Leido</div>
-                                        )}
                                     </div>
                                 ))}
-                            </>
+                            </div>
                         )}
                     </div>
                     <div className="flex-1 flex items-center justify-between">

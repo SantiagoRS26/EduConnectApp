@@ -14,23 +14,16 @@ namespace EduConnect.API.Hubs
     {
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
-        private readonly IConnectionService _connectionService;
         private readonly IRequestService _requestService;
 
-        public ChatHub(IChatService chatService, IUserService userService, IConnectionService connectionService, IRequestService requestService)
+        public ChatHub(IChatService chatService, IUserService userService, IRequestService requestService)
         {   
             _chatService = chatService;
             _userService = userService;
-            _connectionService = connectionService;
             _requestService = requestService;
         }
         public override async Task OnDisconnectedAsync(Exception exception)
         {
-            var userEmail = Context.User.FindFirst(ClaimTypes.Email).Value;
-            var user = await _userService.GetByEmail(userEmail);
-            var connection = Context.ConnectionId;
-            await _connectionService.DeleteConnection(connection);
-
             await base.OnDisconnectedAsync(exception);
         }
         public override async Task OnConnectedAsync()
@@ -54,6 +47,12 @@ namespace EduConnect.API.Hubs
 
                 var user = await _userService.GetByEmail(userEmail);
 
+                // Obtener la zona horaria de Colombia
+                var colombiaTimeZone = TimeZoneInfo.FindSystemTimeZoneById("America/Bogota");
+
+                // Obtener la fecha y hora actual en la zona horaria de Colombia
+                var currentDateTimeColombia = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, colombiaTimeZone);
+
                 var users = await _chatService.GetUsersByChatId(chatId);
 
                 var receiver = users.FirstOrDefault(p => p.UserId != user.UserId);
@@ -64,7 +63,7 @@ namespace EduConnect.API.Hubs
                     ChatId = chatId,
                     SenderId = user.UserId,
                     Message = content,
-                    SentDate = DateTime.UtcNow
+                    SentDate = currentDateTimeColombia
                 };
 
                 await _chatService.SaveMessage(message);

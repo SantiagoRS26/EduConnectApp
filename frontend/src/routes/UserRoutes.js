@@ -1,14 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext } from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Dashboard from '../pages/Dashboard/Home';
 import ChatList from '../pages/Dashboard/ChatList';
 import Profile from '../pages/Dashboard/Profile';
 import accountController from '../services/api/accountController';
 import Chat from '../pages/Dashboard/Chat';
+import SideBar from '../components/SiderBar';
+
+export const UserContext = createContext();
 
 const UserRoutes = () => {
 
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [userData, setUserData] = useState(null);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+        try {
+            console.log('Realizando petición al servidor...');
+            const data = await accountController.userData();
+            if (data) {
+                setUserData(data);
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    fetchUserData();
+}, []);
 
 
   useEffect(() => {
@@ -21,7 +42,7 @@ const UserRoutes = () => {
         throw error;
       }
     };
-
+    console.log("Se ejecuta useEffect de comprobar el token");
     checkAuthentication();
   }, []);
 
@@ -43,12 +64,14 @@ const UserRoutes = () => {
   }
 
   return (
-    <Routes>
-      <Route path="dashboard" element={<Dashboard />} />
-      <Route path="profile" element={<Profile />} />
-      <Route path="chats" element={<ChatList />} />
-      <Route path="chat/:chatId" element={<Chat />} />
-    </Routes>
+    <UserContext.Provider value={{userData}}>
+      <Routes>
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="profile" element={<Profile />} />
+        <Route path="chats" element={<ChatList />} />
+        <Route path="chat/:chatId" element={<Chat />} />
+      </Routes>
+    </UserContext.Provider>
   );
 };
 

@@ -77,3 +77,5 @@ CREATE TABLE History (
     ChangeType VARCHAR(50),
     ChangeDate DATETIME
 );
+
+Scaffold-DbContext 'Data Source=REVISION-PC; Initial Catalog=EduConnectPruebas; Integrated Security=true; TrustServerCertificate=true;' Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataContext -Force

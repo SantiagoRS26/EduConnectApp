@@ -29,6 +29,7 @@ namespace EduConnect.API.Controllers
         {
             return Ok();
         }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginModel user)
         {
@@ -47,6 +48,8 @@ namespace EduConnect.API.Controllers
             var token = _authService.GenerateJwt(userLogin);
             return Ok(new { token = token });
         }
+
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel user)
         {

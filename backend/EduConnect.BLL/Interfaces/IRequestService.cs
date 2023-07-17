@@ -12,5 +12,6 @@ namespace EduConnect.BLL.Interfaces
         Task<bool> CreateRequest(Guid userId, Guid collegeId);
         Task<IQueryable<Request>> GetRequestsByUserId(Guid userId);
         Task<Request> FindMatchingRequests(Guid userId, Guid collegeId);
+        Task<object> GetRequests(Guid userId);
     }
 }

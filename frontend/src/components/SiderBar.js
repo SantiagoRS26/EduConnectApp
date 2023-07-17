@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
     Card,
     Typography,
@@ -31,32 +31,24 @@ import Skeleton from 'react-loading-skeleton';
 
 import "../../node_modules/react-loading-skeleton/dist/skeleton.css";
 
-const SideBar = ({ dataUser = () => { } }) => {
+import { UserContext } from "../routes/UserRoutes";
+
+const SideBar = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const [sidebarOpen, setSidebarOpen] = useState(localStorage.getItem('sidebarOpen') === 'true');
-    const [userData, setUserData] = useState(null);
+    const { userData } = useContext(UserContext);
 
     useEffect(() => {
         localStorage.setItem('sidebarOpen', sidebarOpen);
     }, [sidebarOpen]);
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const data = await accountController.userData();
-                if (data) {
-                    setUserData(data);
-                    dataUser(data);
-                }
-
-            } catch (error) {
-                console.log(error);
-            }
-        };
-
-        fetchUserData();
-    }, []);
+    const handleLogout = () => {
+        localStorage.clear();
+        // Redirige al componente de inicio de sesión u otra página adecuada
+        navigate("/auth/login");
+      };
+      
 
     return (
         <>
@@ -127,7 +119,7 @@ const SideBar = ({ dataUser = () => { } }) => {
                         </ListItem>
                     </List>
                     <List className="flex-1 justify-end min-w-full truncate">
-                        <ListItem className="rounded-full">
+                        <ListItem className="rounded-full" onClick={handleLogout}>
                             <ListItemPrefix>
                                 <PowerIcon className="h-5 w-5" />
                             </ListItemPrefix>

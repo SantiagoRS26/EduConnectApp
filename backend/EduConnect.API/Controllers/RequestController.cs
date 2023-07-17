@@ -30,6 +30,20 @@ namespace EduConnect.API.Controllers
             _chatService = chatService;
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> GetRequests()
+        {
+            var userEmailClaim = HttpContext.User.FindFirst(ClaimTypes.Email);
+            var user = await _userService.GetByEmail(userEmailClaim.Value);
+            var requests = await _requestService.GetRequests(user.UserId);
+            if(requests == null)
+            {
+                return StatusCode(204);
+            }
+            return Ok(requests);
+        }
+
 
         [HttpPost("sendRequest")]
         [Authorize]

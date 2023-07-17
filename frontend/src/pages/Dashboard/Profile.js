@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 
 import SideBar from "../../components/SiderBar";
 
@@ -30,24 +30,22 @@ import accountController from "../../services/api/accountController";
 
 import defaultPhoto from "../../assets/img/avatar/avatarDefault.jpg";
 
+import { UserContext } from "../../routes/UserRoutes";
 
 const Profile = () => {
-    const [activeTab, setActiveTab] = React.useState("html");
+    const [activeTab, setActiveTab] = useState("1");
     const { register, handleSubmit, formState: { errors } } = useForm();
     const [selectedImage, setSelectedImage] = useState(null);
     const [pictureProfile, setPictureProfile] = useState(null);
     const [open, setOpen] = useState(false);
     const inputFileRef = useRef(null);
-    const [userData, setUserData] = useState(null);
     const [selectedCollege, setSelectedCollege] = useState(null);
+    const { userData } = useContext(UserContext);
 
     const handleSelectedCollege = (college) => {
         setSelectedCollege(college);
     };
 
-    const dataUser = (variable) => {
-        setUserData(variable);
-    };
 
     const onSubmit = async (data) => {
         if (pictureProfile) {
@@ -71,7 +69,7 @@ const Profile = () => {
     return (
         <div className="flex bg-white">
             <div className="flex-initial">
-                <SideBar dataUser={dataUser} />
+                <SideBar />
             </div>
             <div className="flex-grow bg-white flex justify-center flex-col items-center space-y-3 mt-8">
                 <div className="flex w-full md:w-11/12">
@@ -140,7 +138,7 @@ const Profile = () => {
                                                         <div className="flex">
                                                             <div className="flex space-x-4 basis-3">
                                                                 <label
-                                                                    className="normal-case py-2 px-6 text-xs font-bold text-white rounded-lg bg-blue-400 hover:bg-blue-600 shadow-none hover:shadow-none"
+                                                                    className="cursor-pointer duration-200 normal-case py-2 px-6 text-xs font-bold text-white rounded-lg bg-blue-400 hover:bg-blue-600 shadow-none hover:shadow-none"
                                                                 >
                                                                     <input
                                                                         type="file"
@@ -224,7 +222,9 @@ const Profile = () => {
                                     <CardBody>
                                         <h1 className="text-xl text-black font-medium w-full">Seleccionar colegio</h1>
                                         <p className="text-gray-600 w-full mb-8">Aquí podra seleccionar un colegio</p>
-                                        <Map onCollegeSelect={handleSelectedCollege} dataUser={userData} />
+                                        <div className="flex w-full h-[600px]">
+                                            <Map onCollegeSelect={handleSelectedCollege} />
+                                        </div>
                                         <h1 className="text-2xl text-black font-medium w-full text-center mt-8">Colegio Seleccionado</h1>
                                         {userData && userData.collegeId ?
                                             (selectedCollege && (

@@ -1,16 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { MapContainer, TileLayer, Popup, Marker, useMapEvents } from "react-leaflet";
 import { icon } from "leaflet";
 import collegesController from "../services/api/collegesController";
 import { AcademicCapIcon } from "@heroicons/react/24/outline";
 import "../../node_modules/leaflet/dist/leaflet.css";
 import { Button } from "@material-tailwind/react";
+import { UserContext } from "../routes/UserRoutes";
 
-
-const Map = ({ onCollegeSelect, dataUser }) => {
+const Map = ({ onCollegeSelect = () => { }, collegeDataSelected = null }) => {
     const [loading, setLoading] = useState(true);
     const [colleges, setColleges] = useState(null);
     const [selectedCollege, setSelectedCollege] = useState(null);
+    const markerRefs = useRef([]);
+    const { userData } = useContext(UserContext);
+
 
 
     const markerIcon = icon({
@@ -28,16 +31,22 @@ const Map = ({ onCollegeSelect, dataUser }) => {
     });
 
     useEffect(() => {
+      if(collegeDataSelected == null) return
+      console.log(" Colle data: ", collegeDataSelected);
+      markerRefs.current[collegeDataSelected.collegeId].openPopup();
+    }, [collegeDataSelected]);
+
+    useEffect(() => {
         const getColleges = async () => {
             try {
                 const collegesData = await collegesController.colleges();
                 setColleges(collegesData);
+                //console.log(collegesData);
 
-                if (dataUser && dataUser.collegeId) {
-                    const selected = collegesData.find(college => college.collegeId === dataUser.collegeId);
+                if (userData && userData.collegeId) {
+                    const selected = collegesData.find(college => college.collegeId === userData.collegeId);
                     setSelectedCollege(selected);
                     onCollegeSelect(selected);
-                    console.log(selectedCollege);
                 }
 
                 setLoading(false);
@@ -46,24 +55,21 @@ const Map = ({ onCollegeSelect, dataUser }) => {
             }
         };
 
-        if (dataUser && dataUser.collegeId) {
+        if (userData && userData.collegeId) {
             getColleges();
         }
-    }, [dataUser]);
+    }, [userData]);
 
 
     if (loading) {
         return <h1>Cargando</h1>;
     }
-
-
     return (
-        <div>
+        <div className="flex-grow">
             <MapContainer
                 center={[4.144042445752373, -73.63421055733126]}
                 zoom={14}
-                style={{ height: '600px' }}
-                className="rounded-md"
+                className="rounded-md h-full"
 
             >
                 <TileLayer
@@ -74,13 +80,17 @@ const Map = ({ onCollegeSelect, dataUser }) => {
                 {colleges.map((college, index) => (
                     <Marker
                         key={index}
+                        isSelected={college.collegeId == "f84900d0-ffd2-4f54-8062-0f40d95900c5"}
                         position={[college.latitude, college.longitude]}
-                        icon={dataUser && dataUser.collegeId == college.collegeId ? (markerIconUser) : (college == selectedCollege ? markerIconUser : markerIcon)}
+                        icon={userData && userData.collegeId == college.collegeId ? (markerIconUser) : (markerIcon)}
                         eventHandlers={{
                             click: () => {
                                 setSelectedCollege(college);
                                 onCollegeSelect(college);
                             }
+                        }}
+                        ref={(ref) => {
+                            markerRefs.current[college.collegeId] = ref;
                         }}
                     >
                         <Popup>

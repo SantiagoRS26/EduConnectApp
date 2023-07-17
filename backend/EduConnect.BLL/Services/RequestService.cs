@@ -80,5 +80,17 @@ namespace EduConnect.BLL.Services
             var response = query.Where(p => p.CollegeId == collegeId && p.UserId != userId && p.Status == "Pendiente");
             return response;
         }
+
+        public async Task<object> GetRequests(Guid userId)
+        {
+            var query = await GetRequestsByUserId(userId);
+            var result = query.Select(request => new
+            {
+                request.CreatedDate,
+                request.Status,
+                request.College
+            });
+            return result;
+        }
     }
 }

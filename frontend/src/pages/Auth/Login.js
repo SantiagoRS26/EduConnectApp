@@ -6,6 +6,8 @@ import { Input, Button, Loading, Text } from '@nextui-org/react';
 import { Checkbox } from '@material-tailwind/react';
 import accountController from '../../services/api/accountController';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import IconGoogle from '../../assets/img/illustrations/svggoogle.svg'
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -13,10 +15,17 @@ const Login = () => {
     const [loginError, setLoginError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const handleGoogleLogin = () => {
+        try {
+            window.location.href = 'https://localhost:7057/auth/google-login';
+        } catch (error) {
+            console.log("Pasa directamente a este error: ", error);
+        }
+    };
+
     const onSubmit = async (data) => {
         try {
             setIsLoading(true);
-
             const response = await accountController.login(data);
             localStorage.setItem('token', response.token);
             navigate('/user/dashboard');
@@ -85,8 +94,11 @@ const Login = () => {
                     <div className="w-full flex flex-col items-center justify-center relative py-2">
                         <div className="divider">O Tambien</div>
                     </div>
-                    <div className="w-full flex flex-col my-10">
-                        <Button className="bg-white text-black text-lg border-black border-solid h-12">Iniciar Sesion con Google</Button>
+                    <div className="w-full flex flex-col my-5">
+                        <Button className="bg-white text-black text-lg border-black border-solid h-12 flex" onPress={handleGoogleLogin}>
+                            <img className='h-full w-8 mx-1' src={IconGoogle} alt="Google Icon" />
+                            Iniciar Sesion con Google
+                        </Button>
                     </div>
                 </div>
                 <div className="w-full flex items-center justify-center my-2">

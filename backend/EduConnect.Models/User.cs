@@ -25,8 +25,6 @@ public partial class User
 
     public virtual College? College { get; set; }
 
-    public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();
-
     public virtual ICollection<History> Histories { get; set; } = new List<History>();
 
     public virtual ICollection<Request> Requests { get; set; } = new List<Request>();
