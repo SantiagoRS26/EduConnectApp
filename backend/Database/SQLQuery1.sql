@@ -10,72 +10,76 @@ CREATE TABLE Departments (
 CREATE TABLE Cities (
     CityID VARCHAR(20) PRIMARY KEY,
     CityName VARCHAR(100),
-    DepartmentID VARCHAR(20) FOREIGN KEY REFERENCES Departments(DepartmentID)
+    DepartmentID VARCHAR(20) REFERENCES Departments(DepartmentID)
 );
 
 -- Create Colleges table
 CREATE TABLE Colleges (
-    CollegeID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    CollegeID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT (NEWID()),
     Name VARCHAR(100),
     Address VARCHAR(100),
     Latitude DECIMAL(9, 6),
     Longitude DECIMAL(9, 6),
-    AdditionalInfo VARCHAR(MAX),
+    AdditionalInfo VARCHAR(max),
     AvailableSlots INT,
-    CityID VARCHAR(20) FOREIGN KEY REFERENCES Cities(CityID)
+    CityID VARCHAR(20) REFERENCES Cities(CityID)
 );
 
 -- Create Roles table
 CREATE TABLE Roles (
-    RoleID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    RoleID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT (NEWID()),
     RoleName VARCHAR(50)
 );
 
 -- Create Users table
 CREATE TABLE Users (
-    UserID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
+    UserID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT (NEWID()),
     Name VARCHAR(50),
     LastName VARCHAR(50),
     Email VARCHAR(100),
     Password VARCHAR(100),
-    RoleID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Roles(RoleID),
-    Photo VARCHAR(MAX),
-    CollegeID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Colleges(CollegeID)
+    RoleID UNIQUEIDENTIFIER REFERENCES Roles(RoleID),
+    Photo VARCHAR(max),
+    CollegeID UNIQUEIDENTIFIER REFERENCES Colleges(CollegeID)
 );
 
 -- Create Requests table
 CREATE TABLE Requests (
-    RequestID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    UserID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(UserID),
-    CollegeID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Colleges(CollegeID),
+    RequestID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT (NEWID()),
+    UserID UNIQUEIDENTIFIER REFERENCES Users(UserID),
+    CollegeID UNIQUEIDENTIFIER REFERENCES Colleges(CollegeID),
     CreatedDate DATETIME,
     Status VARCHAR(50)
 );
 
--- Create Matches table
-CREATE TABLE Matches (
-    MatchID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    RequestID_User1 UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Requests(RequestID),
-    RequestID_User2 UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Requests(RequestID),
-    CreatedDate DATETIME
-);
-
--- Create Chats table
-CREATE TABLE Chats (
-    ChatID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    MatchID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Matches(MatchID),
-    Message VARCHAR(MAX),
-    SentDate DATETIME,
-    Sender VARCHAR(50)
-);
-
 -- Create History table
 CREATE TABLE History (
-    HistoryID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT NEWID(),
-    UserID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Users(UserID),
-    CollegeID UNIQUEIDENTIFIER FOREIGN KEY REFERENCES Colleges(CollegeID),
+    HistoryID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT (NEWID()),
+    UserID UNIQUEIDENTIFIER REFERENCES Users(UserID),
+    CollegeID UNIQUEIDENTIFIER REFERENCES Colleges(CollegeID),
     ChangeType VARCHAR(50),
     ChangeDate DATETIME
 );
 
+-- Create Chats table
+CREATE TABLE Chats (
+    ChatID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT (NEWID()),
+    RequestID1 UNIQUEIDENTIFIER REFERENCES Requests(RequestID),
+    RequestID2 UNIQUEIDENTIFIER REFERENCES Requests(RequestID),
+    CreatedDate DATETIME
+);
+
+-- Create ChatMessages table
+CREATE TABLE ChatMessages (
+    MessageID UNIQUEIDENTIFIER PRIMARY KEY DEFAULT (NEWID()),
+    ChatID UNIQUEIDENTIFIER REFERENCES Chats(ChatID),
+    SenderID UNIQUEIDENTIFIER REFERENCES Users(UserID),
+    Message VARCHAR(max),
+    SentDate DATETIME
+);
+
+
 Scaffold-DbContext 'Data Source=REVISION-PC; Initial Catalog=EduConnectPruebas; Integrated Security=true; TrustServerCertificate=true;' Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataContext -Force
+Scaffold-DbContext 'Data Source=SQL5106.site4now.net;Initial Catalog=db_a9c67f_educonnect;User Id=db_a9c67f_educonnect_admin;Password=#@Totoro9623' Microsoft.EntityFrameworkCore.SqlServer -OutputDir DataContext -Force
+
+

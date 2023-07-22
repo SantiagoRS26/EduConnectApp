@@ -1,11 +1,10 @@
 import axios from "axios";
 
-const BASE_URL = "https://localhost:7057/api/Colleges";
+const BASE_URL = process.env.REACT_APP_API_URL_COLLEGES_CONTROLLER;
 
 const collegesController = {
     colleges: async () =>{
         try {
-            console.log("Llamada al servidor mapa...");
             const token = localStorage.getItem('token');
             const response = await axios.get(`${BASE_URL}/colleges`, {
                 headers: {

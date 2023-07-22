@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://localhost:7057/api/Account";
+const BASE_URL = process.env.REACT_APP_API_URL_ACCOUNT_CONTROLLER;
 
 const accountController = {
     login: async (data) => {
@@ -14,20 +14,20 @@ const accountController = {
     register: async (data) => {
         try {
             const response = await axios.post(`${BASE_URL}/register`, data);
-            return response.data;
+            return response;
         } catch (error) {
-            throw error;
+            return error.response;
         }
     },
     updateUser: async (data) => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.post(`${BASE_URL}/updateUser`, data, {
+            const response = await axios.patch(`${BASE_URL}/updateUser`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             });
-            return response.data;
+            return response;
         } catch (error) {
             console.log(error);
             throw error;
@@ -65,11 +65,9 @@ const accountController = {
     uploadprofilePicture: async (data) => {
         const token = localStorage.getItem('token');
         try {
-            console.log(data);
             const response = await axios.post(`${BASE_URL}/uploadprofilepicture`, data, {
                 headers: {
                     Authorization: `Bearer ${token}`
-                    //"Content-Type": "multipart/form-data"
                 },
             });
             return response.data;
@@ -77,7 +75,7 @@ const accountController = {
             throw error;
         }
     },
-    updateUser: async (data) => {
+    /* updateUser: async (data) => {
         const token = localStorage.getItem('token');
         try {
             const response = await axios.patch(`${BASE_URL}/updateUser`, data, {
@@ -90,7 +88,7 @@ const accountController = {
         } catch (error) {
             throw error;
         }
-    }
+    } */
 }
 
 export default accountController;

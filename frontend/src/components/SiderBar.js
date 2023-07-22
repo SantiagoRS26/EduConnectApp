@@ -6,8 +6,7 @@ import {
     ListItem,
     ListItemPrefix,
     ListItemSuffix,
-    Chip,
-    Button
+    Chip
 } from "@material-tailwind/react";
 import {
     PresentationChartBarIcon,
@@ -15,8 +14,7 @@ import {
     Cog6ToothIcon,
     PowerIcon,
     ChatBubbleBottomCenterTextIcon,
-    ArrowLeftIcon,
-    ArrowRightIcon
+    ArrowLeftIcon
 } from "@heroicons/react/24/solid";
 
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -24,8 +22,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import defaultPhoto from "../assets/img/avatar/avatarDefault.jpg";
 
 import { Avatar } from "@nextui-org/react";
-
-import accountController from "../services/api/accountController";
 
 import Skeleton from 'react-loading-skeleton';
 
@@ -49,7 +45,7 @@ const SideBar = () => {
         navigate("/auth/login");
       };
       
-
+    const urlPictures = process.env.REACT_APP_API_URL_PICTURES_URL;
     return (
         <>
             <div className={`${sidebarOpen ? 'w-[20rem]' : 'w-[6rem]'} transition-all duration-300`}></div>
@@ -70,7 +66,7 @@ const SideBar = () => {
                         <div className={`w-full flex justify-center flex-col pt-10 items-center`}>
                             <Avatar
                                 className={`${sidebarOpen ? 'h-28 w-28' : 'w-16 h-16'} transition-all duration-300`}
-                                src={userData ? (userData.photo ? `https://localhost:7057/pictures/${userData.photo}` : defaultPhoto) : (<Skeleton containerClassName="flex-1" circle="true" />)}
+                                src={userData ? (userData.photo ? `${urlPictures}${userData.photo}` : defaultPhoto) : (<Skeleton containerClassName="flex-1" circle="true" />)}
                             />
                             <Typography
                                 className={`my-3 flex w-full justify-center duration-300 overflow-hidden truncate ${sidebarOpen ? 'text-opacity-100' : 'invisible text-opacity-0'}`} variant="h5" color="blue-gray"

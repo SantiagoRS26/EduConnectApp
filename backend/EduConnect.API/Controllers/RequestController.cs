@@ -1,4 +1,5 @@
 ﻿using EduConnect.API.Hubs;
+using EduConnect.API.Models;
 using EduConnect.BLL.Interfaces;
 using EduConnect.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +38,7 @@ namespace EduConnect.API.Controllers
             var userEmailClaim = HttpContext.User.FindFirst(ClaimTypes.Email);
             var user = await _userService.GetByEmail(userEmailClaim.Value);
             var requests = await _requestService.GetRequests(user.UserId);
-            if(requests == null)
+            if (requests == null)
             {
                 return StatusCode(204);
             }
@@ -47,15 +48,14 @@ namespace EduConnect.API.Controllers
 
         [HttpPost("sendRequest")]
         [Authorize]
-        public async Task<IActionResult> SendRequest([FromBody] string collegeId)
+        public async Task<IActionResult> SendRequest(CollegeModel college)
         {
             var userEmailClaim = HttpContext.User.FindFirst(ClaimTypes.Email);
-            if (userEmailClaim == null)
-                return Unauthorized("Token Invalido.");
             
             var user = await _userService.GetByEmail(userEmailClaim.Value);
             if (user.CollegeId == null) return BadRequest("Por favor primero seleccione en su perfil el colegio donde se encuentra.");
 
+            string collegeId = college.CollegeId;
             var collegeExists = await _collegeService.CollegeExists(collegeId);
             if (!collegeExists) return NotFound("El colegio ingresado no existe en la base de datos.");
 

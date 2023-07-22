@@ -6,7 +6,6 @@ import { Input, Button, Loading, Text } from '@nextui-org/react';
 import { Checkbox } from '@material-tailwind/react';
 import accountController from '../../services/api/accountController';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import IconGoogle from '../../assets/img/illustrations/svggoogle.svg'
 
 const Login = () => {
@@ -17,7 +16,8 @@ const Login = () => {
 
     const handleGoogleLogin = () => {
         try {
-            window.location.href = 'https://localhost:7057/auth/google-login';
+            const urlGoogleSignIn = process.env.REACT_APP_API_URL_GOOGLE_SIGNIN;
+            window.location.href = urlGoogleSignIn;
         } catch (error) {
             console.log("Pasa directamente a este error: ", error);
         }
@@ -88,7 +88,7 @@ const Login = () => {
                             <Button className="bg-cyan-400 my-4 text-lg h-12" type="submit">
                                 {isLoading ? <Loading color="currentColor" /> : 'Iniciar Sesión'}
                             </Button>
-                            <Button className="bg-black text-lg h-12">Registrarse</Button>
+                            <Button className="bg-black text-lg h-12" onClick={() => {navigate('/auth/signup')}}>Registrarse</Button>
                         </div>
                     </form>
                     <div className="w-full flex flex-col items-center justify-center relative py-2">
@@ -102,7 +102,7 @@ const Login = () => {
                     </div>
                 </div>
                 <div className="w-full flex items-center justify-center my-2">
-                    <p className="text-sm font-normal ">No tienes cuenta? <span className="font-semibold underline underline-offset-2 cursor-pointer"> Registrate gratis</span></p>
+                    <p className="text-sm font-normal ">No tienes cuenta? <span className="font-semibold underline underline-offset-2 cursor-pointer" onClick={() => {navigate('/auth/signup')}}> Registrate gratis</span></p>
                 </div>
             </div>
         </div>

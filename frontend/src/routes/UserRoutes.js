@@ -6,6 +6,7 @@ import Profile from '../pages/Dashboard/Profile';
 import accountController from '../services/api/accountController';
 import Chat from '../pages/Dashboard/Chat';
 import SideBar from '../components/SiderBar';
+import collegesController from '../services/api/collegesController';
 
 export const UserContext = createContext();
 
@@ -13,26 +14,22 @@ const UserRoutes = () => {
 
   const [isAuthenticated, setIsAuthenticated] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [colleges, setColleges] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-        try {
-            console.log('Realizando petición al servidor...');
-            const data = await accountController.userData();
-            if (data) {
-                setUserData(data);
-            }
 
-        } catch (error) {
-            console.log(error);
+    const fetchUserData = async () => {
+      try {
+        const data = await accountController.userData();
+        if (data) {
+          setUserData(data);
         }
+
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    fetchUserData();
-}, []);
-
-
-  useEffect(() => {
     const checkAuthentication = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -42,9 +39,21 @@ const UserRoutes = () => {
         throw error;
       }
     };
-    console.log("Se ejecuta useEffect de comprobar el token");
+
+    const getColleges = async () => {
+      try {
+        const collegesData = await collegesController.colleges();
+        setColleges(collegesData);
+      } catch (error) {
+        console.error('Error al obtener las ubicaciones:', error);
+      }
+    };
+    getColleges();
     checkAuthentication();
+    fetchUserData();
+
   }, []);
+
 
   if (isAuthenticated === null) {
     return (
@@ -64,7 +73,7 @@ const UserRoutes = () => {
   }
 
   return (
-    <UserContext.Provider value={{userData}}>
+    <UserContext.Provider value={{ userData, colleges }}>
       <Routes>
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="profile" element={<Profile />} />

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace EduConnect.API.Controllers
 {
-    [Route("auth")]
+    [Route("api/[controller]")]
     [ApiController]
     public class ExternalAuthController : ControllerBase
     {

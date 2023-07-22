@@ -54,7 +54,7 @@ namespace EduConnect.DAL.Repositories
 
         public async Task<IQueryable<User>> GetAll()
         {
-            IQueryable<User> entityModels = _dbContext.Users.Include(u => u.Role);
+            IQueryable<User> entityModels = _dbContext.Users.Include(u => u.Role).Include(u => u.College);
             return entityModels;
         }
 

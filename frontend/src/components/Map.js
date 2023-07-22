@@ -8,13 +8,11 @@ import { Button } from "@material-tailwind/react";
 import { UserContext } from "../routes/UserRoutes";
 
 const Map = ({ onCollegeSelect = () => { }, collegeDataSelected = null }) => {
-    const [loading, setLoading] = useState(true);
-    const [colleges, setColleges] = useState(null);
+
+    const [collegesData, setColleges] = useState(null);
     const [selectedCollege, setSelectedCollege] = useState(null);
     const markerRefs = useRef([]);
-    const { userData } = useContext(UserContext);
-
-
+    const { userData, colleges } = useContext(UserContext);
 
     const markerIcon = icon({
         iconUrl: require("../assets/img/map/iconMarker.png"),
@@ -32,38 +30,9 @@ const Map = ({ onCollegeSelect = () => { }, collegeDataSelected = null }) => {
 
     useEffect(() => {
       if(collegeDataSelected == null) return
-      console.log(" Colle data: ", collegeDataSelected);
       markerRefs.current[collegeDataSelected.collegeId].openPopup();
     }, [collegeDataSelected]);
 
-    useEffect(() => {
-        const getColleges = async () => {
-            try {
-                const collegesData = await collegesController.colleges();
-                setColleges(collegesData);
-                //console.log(collegesData);
-
-                if (userData && userData.collegeId) {
-                    const selected = collegesData.find(college => college.collegeId === userData.collegeId);
-                    setSelectedCollege(selected);
-                    onCollegeSelect(selected);
-                }
-
-                setLoading(false);
-            } catch (error) {
-                console.error('Error al obtener las ubicaciones:', error);
-            }
-        };
-
-        if (userData && userData.collegeId) {
-            getColleges();
-        }
-    }, [userData]);
-
-
-    if (loading) {
-        return <h1>Cargando</h1>;
-    }
     return (
         <div className="flex-grow">
             <MapContainer
@@ -77,12 +46,12 @@ const Map = ({ onCollegeSelect = () => { }, collegeDataSelected = null }) => {
                     attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 />
 
-                {colleges.map((college, index) => (
+                {colleges && colleges.map((college, index) => (
                     <Marker
                         key={index}
                         isSelected={college.collegeId == "f84900d0-ffd2-4f54-8062-0f40d95900c5"}
                         position={[college.latitude, college.longitude]}
-                        icon={userData && userData.collegeId == college.collegeId ? (markerIconUser) : (markerIcon)}
+                        icon={userData && userData.college && userData.college.id == college.collegeId ? (markerIconUser) : (markerIcon)}
                         eventHandlers={{
                             click: () => {
                                 setSelectedCollege(college);

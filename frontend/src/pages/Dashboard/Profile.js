@@ -48,24 +48,24 @@ const Profile = () => {
 
 
     const onSubmit = async (data) => {
+        if (selectedCollege) data.CollegeId = selectedCollege.collegeId;
         if (pictureProfile) {
             const formData = new FormData();
             formData.append("file", pictureProfile);
             try {
                 const response = await accountController.uploadprofilePicture(formData);
-                console.log(response);
             } catch (error) {
                 console.log(error);
             }
         }
-        /* try {
+        try {
             const response = await accountController.updateUser(data);
-            console.log(response);
+            window.location.reload();
         } catch (error) {
-            throw error;
-        } */
-    };
 
+        }
+    };
+    const urlPictures = process.env.REACT_APP_API_URL_PICTURES_URL;
     return (
         <div className="flex bg-white">
             <div className="flex-initial">
@@ -129,7 +129,7 @@ const Profile = () => {
                                                         selectedImage ?
                                                             (selectedImage)
                                                             :
-                                                            (userData && userData.photo ? `https://localhost:7057/pictures/${userData.photo}` : (defaultPhoto))
+                                                            (userData && userData.photo ? `${urlPictures}${userData.photo}` : (defaultPhoto))
                                                     }
                                                     className="w-[120px] h-[120px] mt-5"
                                                 />
@@ -226,17 +226,14 @@ const Profile = () => {
                                             <Map onCollegeSelect={handleSelectedCollege} />
                                         </div>
                                         <h1 className="text-2xl text-black font-medium w-full text-center mt-8">Colegio Seleccionado</h1>
-                                        {userData && userData.collegeId ?
-                                            (selectedCollege && (
-                                                <div>
-                                                    <p className="text-gray-600 text-center text-lg">{selectedCollege.name}</p>
-                                                    <p className="text-gray-600 text-center text-lg">{selectedCollege.address}</p>
-                                                    <p className="text-gray-600 text-center text-lg">{selectedCollege.additionalInfo}</p>
-                                                </div>
-
-                                            ))
-                                            :
-                                            <h1>Aun no tiene algun colegio seleccionado</h1>}
+                                        {userData && userData.college ? (
+                                            <div className="mt-2">
+                                            <p className="text-gray-600 text-center text-lg">{userData.college.name}</p>
+                                            <p className="text-gray-600 text-center text-lg">{userData.college.address}</p>
+                                            <p className="text-gray-600 text-center text-lg">{userData.college.additionalInfo}</p>
+                                        </div>
+                                        ):
+                                            <h1 className="text-center mt-2">Aun no tiene algun colegio seleccionado</h1>}
 
                                     </CardBody>
                                 </Card>

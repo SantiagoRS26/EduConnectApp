@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://localhost:7057/api/Chat";
+const BASE_URL = process.env.REACT_APP_API_URL_CHAT_CONTROLLER;
 
 
 const chatController = {

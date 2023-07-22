@@ -38,7 +38,7 @@ namespace EduConnect.BLL.Services
             try
             {
                 entityModel.Password = _securityService.EncryptPassword(entityModel.Password);
-                entityModel.RoleId = new Guid(await getRoleIdUser());
+                entityModel.RoleId = new Guid(await GetRoleIdUser());
                 await _repository.Create(entityModel);
                 return true; 
             }
@@ -48,7 +48,7 @@ namespace EduConnect.BLL.Services
             }
         }
 
-        public async Task<string> getRoleIdUser()
+        public async Task<string> GetRoleIdUser()
         {
             var query = await _repositoryRole.GetAll();
             var role  = query.FirstOrDefault(p => p.RoleName=="user");
@@ -77,7 +77,7 @@ namespace EduConnect.BLL.Services
         public async Task<User> GetByEmail(string email)
         {
             var userData = await _repository.GetAll();
-            var data = userData.First(p => p.Email == email);
+            var data = userData.FirstOrDefault(p => p.Email == email);
             return data;
         }
 

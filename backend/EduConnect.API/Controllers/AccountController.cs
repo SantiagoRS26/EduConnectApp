@@ -17,11 +17,13 @@ namespace EduConnect.API.Controllers
         private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly ICollegeService _collegeService;
-        public AccountController(IAuthService authService, IUserService userService, ICollegeService collegeService)
+        private readonly ISecurityService _securityService;
+        public AccountController(IAuthService authService, IUserService userService, ICollegeService collegeService, ISecurityService securityService)
         {
             _authService = authService;
             _userService = userService;
             _collegeService = collegeService;
+            _securityService = securityService;
         }
         [HttpGet("validateJwt")]
         [Authorize]
@@ -57,12 +59,18 @@ namespace EduConnect.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+            var existUser = await _userService.GetByEmail(user.Email);
+
+            if(existUser != null) return Conflict("El correo ingresado ya esta registrado");
+
             bool response = await _userService.CreateUser(new User { Name = user.Name, LastName = user.LastName, Email = user.Email, Password = user.Password });
 
             if (!response) {
                 return BadRequest(ModelState);
             }
-            return StatusCode(200, user);
+            var newUser = await _userService.GetByEmail(user.Email);
+            var token = _authService.GenerateJwt(newUser);
+            return Ok(new { token = token });
             
         }
         [HttpPatch("updateUser")]
@@ -84,6 +92,7 @@ namespace EduConnect.API.Controllers
                 {
                     ModelState.AddModelError("CollegeId", "El ID del colegio proporcionado no existe.");
                 }
+                existingUser.CollegeId = updatedUser.CollegeId;
             }
 
             if (!ModelState.IsValid)
@@ -91,11 +100,22 @@ namespace EduConnect.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            existingUser.Name = updatedUser.Name ?? existingUser.Name;
-            existingUser.LastName = updatedUser.LastName ?? existingUser.LastName;
-            existingUser.Email = updatedUser.Email ?? existingUser.Email;
-            existingUser.Password = updatedUser.Password ?? existingUser.Password;
-            existingUser.CollegeId = updatedUser.CollegeId ?? existingUser.CollegeId;
+            if (!string.IsNullOrEmpty(updatedUser.Name))
+            {
+                existingUser.Name = updatedUser.Name;
+            }
+            if (!string.IsNullOrEmpty(updatedUser.LastName))
+            {
+                existingUser.LastName = updatedUser.LastName;
+            }
+            if (!string.IsNullOrEmpty(updatedUser.Email))
+            {
+                existingUser.Email = updatedUser.Email;
+            }
+            if (!string.IsNullOrEmpty(updatedUser.Password))
+            {
+                existingUser.Password = _securityService.EncryptPassword(updatedUser.Password);
+            }
 
             // Guardar los cambios en la base de datos
             await _userService.Update(existingUser);
@@ -132,7 +152,15 @@ namespace EduConnect.API.Controllers
                 LastName = userData.LastName,
                 Photo = userData.Photo,
                 Role = userData.Role.RoleName,
-                CollegeId = userData.CollegeId
+                College = userData.College != null ? new
+                {
+                    Name = userData.College.Name,
+                    Id = userData.College.CollegeId,
+                    Latitude = userData.College.Latitude,
+                    Longitude = userData.College.Longitude,
+                    AdditionalInfo = userData.College.AdditionalInfo,
+                    Address = userData.College.Address
+                } : null
             };
 
             return Ok(response);

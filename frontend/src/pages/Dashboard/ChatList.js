@@ -56,6 +56,8 @@ const ChatList = () => {
     fetchChatsUser();
   }, []);
 
+  const urlPictures = process.env.REACT_APP_API_URL_PICTURES_URL;
+
   return (
     <div className="flex h-screen">
       <div className="flex-initial">
@@ -67,7 +69,7 @@ const ChatList = () => {
           {chatsUser ? (chatsUser.map((chat) => (
             <ListItem key={chat.ChatId} onClick={() => handleChatClick(chat.ChatId)}>
               <ListItemPrefix>
-                <Avatar withBorder={true} color="green" variant="circular" alt={chat.name} src={`https://localhost:7057/pictures/${chat.OtherImage}` || (defaultPhoto)} />
+                <Avatar withBorder={true} color="green" variant="circular" alt={chat.name} src={`${urlPictures}${chat.OtherImage}` || (defaultPhoto)} />
               </ListItemPrefix>
               <div>
                 <Typography variant="h6" color="blue-gray">

@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const BASE_URL = "https://localhost:7057/api/Request";
+const BASE_URL = process.env.REACT_APP_API_URL_REQUEST_CONTROLLER;
 
 const requestController = {
-    getRequest: async () =>{
+    getRequest: async () => {
         try {
             const token = localStorage.getItem('token');
             const response = await axios.get(`${BASE_URL}`, {
@@ -12,6 +12,19 @@ const requestController = {
                 },
             });
             return response.data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    sendRequest: async (data) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.post(`${BASE_URL}/sendRequest`, data, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+            });
+            return response;
         } catch (error) {
             throw error;
         }

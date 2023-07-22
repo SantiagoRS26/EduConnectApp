@@ -1,11 +1,10 @@
-import React from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 const createSignalRConnection = () => {
     const token = localStorage.getItem('token');
-  
+    const urlHub = process.env.REACT_APP_API_URL_SIGNALR_HUB;
     const connection = new HubConnectionBuilder()
-      .withUrl("https://localhost:7057/Hubs/ChatHub", {
+      .withUrl(urlHub, {
         accessTokenFactory: () => token,
       })
       .configureLogging(LogLevel.Error)
