@@ -25,7 +25,6 @@ El proyecto está dividido en las siguientes capas:
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
 - [Node.js](https://nodejs.org/) (para ejecutar el frontend)
-- [Angular CLI](https://angular.io/cli) (si el frontend está desarrollado en Angular)
 - [Visual Studio Code](https://code.visualstudio.com/) o [Visual Studio](https://visualstudio.microsoft.com/)
 
 ## Configuración del Proyecto
